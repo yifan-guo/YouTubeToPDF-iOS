@@ -1,0 +1,601 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A4E7C9772D2C6808007DA103 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E7C9762D2C6808007DA103 /* AppDelegate.swift */; };
+		A4E7C9792D2C6808007DA103 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E7C9782D2C6808007DA103 /* SceneDelegate.swift */; };
+		A4E7C97B2D2C6808007DA103 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E7C97A2D2C6808007DA103 /* ViewController.swift */; };
+		A4E7C97E2D2C6808007DA103 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A4E7C97C2D2C6808007DA103 /* Main.storyboard */; };
+		A4E7C9802D2C680A007DA103 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A4E7C97F2D2C680A007DA103 /* Assets.xcassets */; };
+		A4E7C9832D2C680A007DA103 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A4E7C9812D2C680A007DA103 /* LaunchScreen.storyboard */; };
+		A4E7C98E2D2C680A007DA103 /* YouTubeToPDFTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E7C98D2D2C680A007DA103 /* YouTubeToPDFTests.swift */; };
+		A4E7C9982D2C680B007DA103 /* YouTubeToPDFUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E7C9972D2C680B007DA103 /* YouTubeToPDFUITests.swift */; };
+		A4E7C99A2D2C680B007DA103 /* YouTubeToPDFUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E7C9992D2C680B007DA103 /* YouTubeToPDFUITestsLaunchTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A4E7C98A2D2C680A007DA103 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A4E7C96B2D2C6807007DA103 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A4E7C9722D2C6808007DA103;
+			remoteInfo = YouTubeToPDF;
+		};
+		A4E7C9942D2C680B007DA103 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A4E7C96B2D2C6807007DA103 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A4E7C9722D2C6808007DA103;
+			remoteInfo = YouTubeToPDF;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		A4E7C9732D2C6808007DA103 /* YouTubeToPDF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YouTubeToPDF.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4E7C9762D2C6808007DA103 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A4E7C9782D2C6808007DA103 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		A4E7C97A2D2C6808007DA103 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		A4E7C97D2D2C6808007DA103 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		A4E7C97F2D2C680A007DA103 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A4E7C9822D2C680A007DA103 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		A4E7C9842D2C680A007DA103 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A4E7C9892D2C680A007DA103 /* YouTubeToPDFTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YouTubeToPDFTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4E7C98D2D2C680A007DA103 /* YouTubeToPDFTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubeToPDFTests.swift; sourceTree = "<group>"; };
+		A4E7C9932D2C680B007DA103 /* YouTubeToPDFUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YouTubeToPDFUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4E7C9972D2C680B007DA103 /* YouTubeToPDFUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubeToPDFUITests.swift; sourceTree = "<group>"; };
+		A4E7C9992D2C680B007DA103 /* YouTubeToPDFUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubeToPDFUITestsLaunchTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A4E7C9702D2C6808007DA103 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A4E7C9862D2C680A007DA103 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A4E7C9902D2C680B007DA103 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A4E7C96A2D2C6807007DA103 = {
+			isa = PBXGroup;
+			children = (
+				A4E7C9752D2C6808007DA103 /* YouTubeToPDF */,
+				A4E7C98C2D2C680A007DA103 /* YouTubeToPDFTests */,
+				A4E7C9962D2C680B007DA103 /* YouTubeToPDFUITests */,
+				A4E7C9742D2C6808007DA103 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A4E7C9742D2C6808007DA103 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A4E7C9732D2C6808007DA103 /* YouTubeToPDF.app */,
+				A4E7C9892D2C680A007DA103 /* YouTubeToPDFTests.xctest */,
+				A4E7C9932D2C680B007DA103 /* YouTubeToPDFUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A4E7C9752D2C6808007DA103 /* YouTubeToPDF */ = {
+			isa = PBXGroup;
+			children = (
+				A4E7C9762D2C6808007DA103 /* AppDelegate.swift */,
+				A4E7C9782D2C6808007DA103 /* SceneDelegate.swift */,
+				A4E7C97A2D2C6808007DA103 /* ViewController.swift */,
+				A4E7C97C2D2C6808007DA103 /* Main.storyboard */,
+				A4E7C97F2D2C680A007DA103 /* Assets.xcassets */,
+				A4E7C9812D2C680A007DA103 /* LaunchScreen.storyboard */,
+				A4E7C9842D2C680A007DA103 /* Info.plist */,
+			);
+			path = YouTubeToPDF;
+			sourceTree = "<group>";
+		};
+		A4E7C98C2D2C680A007DA103 /* YouTubeToPDFTests */ = {
+			isa = PBXGroup;
+			children = (
+				A4E7C98D2D2C680A007DA103 /* YouTubeToPDFTests.swift */,
+			);
+			path = YouTubeToPDFTests;
+			sourceTree = "<group>";
+		};
+		A4E7C9962D2C680B007DA103 /* YouTubeToPDFUITests */ = {
+			isa = PBXGroup;
+			children = (
+				A4E7C9972D2C680B007DA103 /* YouTubeToPDFUITests.swift */,
+				A4E7C9992D2C680B007DA103 /* YouTubeToPDFUITestsLaunchTests.swift */,
+			);
+			path = YouTubeToPDFUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A4E7C9722D2C6808007DA103 /* YouTubeToPDF */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A4E7C99D2D2C680B007DA103 /* Build configuration list for PBXNativeTarget "YouTubeToPDF" */;
+			buildPhases = (
+				A4E7C96F2D2C6808007DA103 /* Sources */,
+				A4E7C9702D2C6808007DA103 /* Frameworks */,
+				A4E7C9712D2C6808007DA103 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = YouTubeToPDF;
+			productName = YouTubeToPDF;
+			productReference = A4E7C9732D2C6808007DA103 /* YouTubeToPDF.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A4E7C9882D2C680A007DA103 /* YouTubeToPDFTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A4E7C9A02D2C680B007DA103 /* Build configuration list for PBXNativeTarget "YouTubeToPDFTests" */;
+			buildPhases = (
+				A4E7C9852D2C680A007DA103 /* Sources */,
+				A4E7C9862D2C680A007DA103 /* Frameworks */,
+				A4E7C9872D2C680A007DA103 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A4E7C98B2D2C680A007DA103 /* PBXTargetDependency */,
+			);
+			name = YouTubeToPDFTests;
+			productName = YouTubeToPDFTests;
+			productReference = A4E7C9892D2C680A007DA103 /* YouTubeToPDFTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		A4E7C9922D2C680B007DA103 /* YouTubeToPDFUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A4E7C9A32D2C680B007DA103 /* Build configuration list for PBXNativeTarget "YouTubeToPDFUITests" */;
+			buildPhases = (
+				A4E7C98F2D2C680B007DA103 /* Sources */,
+				A4E7C9902D2C680B007DA103 /* Frameworks */,
+				A4E7C9912D2C680B007DA103 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A4E7C9952D2C680B007DA103 /* PBXTargetDependency */,
+			);
+			name = YouTubeToPDFUITests;
+			productName = YouTubeToPDFUITests;
+			productReference = A4E7C9932D2C680B007DA103 /* YouTubeToPDFUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A4E7C96B2D2C6807007DA103 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1420;
+				LastUpgradeCheck = 1420;
+				TargetAttributes = {
+					A4E7C9722D2C6808007DA103 = {
+						CreatedOnToolsVersion = 14.2;
+					};
+					A4E7C9882D2C680A007DA103 = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = A4E7C9722D2C6808007DA103;
+					};
+					A4E7C9922D2C680B007DA103 = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = A4E7C9722D2C6808007DA103;
+					};
+				};
+			};
+			buildConfigurationList = A4E7C96E2D2C6807007DA103 /* Build configuration list for PBXProject "YouTubeToPDF" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A4E7C96A2D2C6807007DA103;
+			productRefGroup = A4E7C9742D2C6808007DA103 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A4E7C9722D2C6808007DA103 /* YouTubeToPDF */,
+				A4E7C9882D2C680A007DA103 /* YouTubeToPDFTests */,
+				A4E7C9922D2C680B007DA103 /* YouTubeToPDFUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A4E7C9712D2C6808007DA103 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A4E7C9832D2C680A007DA103 /* LaunchScreen.storyboard in Resources */,
+				A4E7C9802D2C680A007DA103 /* Assets.xcassets in Resources */,
+				A4E7C97E2D2C6808007DA103 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A4E7C9872D2C680A007DA103 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A4E7C9912D2C680B007DA103 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A4E7C96F2D2C6808007DA103 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A4E7C97B2D2C6808007DA103 /* ViewController.swift in Sources */,
+				A4E7C9772D2C6808007DA103 /* AppDelegate.swift in Sources */,
+				A4E7C9792D2C6808007DA103 /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A4E7C9852D2C680A007DA103 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A4E7C98E2D2C680A007DA103 /* YouTubeToPDFTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A4E7C98F2D2C680B007DA103 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A4E7C99A2D2C680B007DA103 /* YouTubeToPDFUITestsLaunchTests.swift in Sources */,
+				A4E7C9982D2C680B007DA103 /* YouTubeToPDFUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A4E7C98B2D2C680A007DA103 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A4E7C9722D2C6808007DA103 /* YouTubeToPDF */;
+			targetProxy = A4E7C98A2D2C680A007DA103 /* PBXContainerItemProxy */;
+		};
+		A4E7C9952D2C680B007DA103 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A4E7C9722D2C6808007DA103 /* YouTubeToPDF */;
+			targetProxy = A4E7C9942D2C680B007DA103 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		A4E7C97C2D2C6808007DA103 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A4E7C97D2D2C6808007DA103 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		A4E7C9812D2C680A007DA103 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A4E7C9822D2C680A007DA103 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		A4E7C99B2D2C680B007DA103 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A4E7C99C2D2C680B007DA103 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A4E7C99E2D2C680B007DA103 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = YouTubeToPDF/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "gh-yifan.YouTubeToPDF";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A4E7C99F2D2C680B007DA103 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = YouTubeToPDF/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "gh-yifan.YouTubeToPDF";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A4E7C9A12D2C680B007DA103 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "gh-yifan.YouTubeToPDFTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YouTubeToPDF.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/YouTubeToPDF";
+			};
+			name = Debug;
+		};
+		A4E7C9A22D2C680B007DA103 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "gh-yifan.YouTubeToPDFTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YouTubeToPDF.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/YouTubeToPDF";
+			};
+			name = Release;
+		};
+		A4E7C9A42D2C680B007DA103 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "gh-yifan.YouTubeToPDFUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = YouTubeToPDF;
+			};
+			name = Debug;
+		};
+		A4E7C9A52D2C680B007DA103 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "gh-yifan.YouTubeToPDFUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = YouTubeToPDF;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A4E7C96E2D2C6807007DA103 /* Build configuration list for PBXProject "YouTubeToPDF" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A4E7C99B2D2C680B007DA103 /* Debug */,
+				A4E7C99C2D2C680B007DA103 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A4E7C99D2D2C680B007DA103 /* Build configuration list for PBXNativeTarget "YouTubeToPDF" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A4E7C99E2D2C680B007DA103 /* Debug */,
+				A4E7C99F2D2C680B007DA103 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A4E7C9A02D2C680B007DA103 /* Build configuration list for PBXNativeTarget "YouTubeToPDFTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A4E7C9A12D2C680B007DA103 /* Debug */,
+				A4E7C9A22D2C680B007DA103 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A4E7C9A32D2C680B007DA103 /* Build configuration list for PBXNativeTarget "YouTubeToPDFUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A4E7C9A42D2C680B007DA103 /* Debug */,
+				A4E7C9A52D2C680B007DA103 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A4E7C96B2D2C6807007DA103 /* Project object */;
+}
