@@ -9,6 +9,8 @@ class ViewController: UIViewController {
     let apiGatewayUrl = "https://bnwc9iszkk.execute-api.us-east-2.amazonaws.com/prod/convert"
     let pollingUrl = "https://bnwc9iszkk.execute-api.us-east-2.amazonaws.com/prod/status"
     
+
+                                                       
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -41,7 +43,9 @@ class ViewController: UIViewController {
         let requestBody: [String: Any] = ["youtube_url": youtubeUrl]
         
         do {
-            let jsonData = try JSONSerialization.data(withJSONObject: requestBody, options: .prettyPrinted)
+            let jsonData = try JSONSerialization.data(withJSONObject: requestBody, options: [.withoutEscapingSlashes])
+            print("Request URL: \(url)")
+            print("Request Body: \(String(data: jsonData, encoding: .utf8) ?? "")")
             request.httpBody = jsonData
         } catch {
             print("Error encoding request body: \(error)")
@@ -61,6 +65,19 @@ class ViewController: UIViewController {
                 return
             }
             
+            // Log the response
+            if let response = response as? HTTPURLResponse {
+                print("Response Status Code: \(response.statusCode)")
+                print("Response Headers: \(response.allHeaderFields)")
+                
+                if response.statusCode == 400, let data = data {
+                    // Log the body of the error response
+                    if let errorBody = String(data: data, encoding: .utf8) {
+                        print("Error Body: \(errorBody)")
+                    }
+                }
+            }
+        
             guard let data = data else {
                 print("No data received from Step Function")
                 DispatchQueue.main.async {
@@ -71,31 +88,78 @@ class ViewController: UIViewController {
             
             do {
                 // Parse the response to extract the execution ID or task status
-                if let responseDict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-                   let executionId = responseDict["executionId"] as? String {
-                    // Store the execution ID for polling the status later
-                    print("Step Function triggered successfully. Execution ID: \(executionId)")
-                    
-                    // Poll for the result (the presigned URL)
-                    self.pollForResult(executionId: executionId)
+                if let responseDict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    if let statusCode = responseDict["statusCode"] as? Int {
+                        if statusCode == 202 {
+                            if let body = responseDict["body"] as? String,
+                               let jsonData = body.data(using: .utf8),
+                               let bodyDict = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any],
+                               let executionId = bodyDict["job_id"] as? String {
+                                // Store the execution ID for polling the status later
+                                print("Step Function triggered successfully. Job ID: \(executionId). Polling for result")
+                                
+                                // Poll for the result (the presigned URL)
+                                let startTime = Date()      // Capture the start time when polling begins
+                                self.pollForResult(executionId: executionId, startTime: startTime)
+                            }
+                        } else {
+                            // Handle non-202 status codes
+                            print("Error: Received status code \(statusCode)")
+                            self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
+                            return
+                        }
+                    } else {
+                        // Handle missing statuscode
+                        print("Response is missing statusCode")
+                        if let errorBody = String(data: data, encoding: .utf8) {
+                            print("Response body: \(errorBody)")
+                        }
+                        self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
+                    }
+                } else {
+                    print("Unexpected response structure")
+                    if let errorBody = String(data: data, encoding: .utf8) {
+                        print("Response body: \(errorBody)")
+                    }
+                    self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
                 }
             } catch {
                 print("Error parsing Step Function response: \(error)")
-                DispatchQueue.main.async {
-                    self.submitButton.isEnabled = true // Re-enable button if error occurs
-                }
+                self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
             }
         }
         
         task.resume()
     }
     
-    func pollForResult(executionId: String) {
+    func showErrorAlert(message: String) {
+        DispatchQueue.main.async {
+            // Re-enable the submit button if error occurs
+            self.submitButton.isEnabled = true
+            
+            // Create the alert
+            let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+            
+            // Add the "OK" action to dismiss the alert
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            
+            // Present the alert
+            self.present(alert, animated: true)
+        }
+    }
+    
+    /*
+     Retry for up to 15 minutes. We'll keep track of the time elapsed and ensure we don't keep retrying past 15 minutes.
+     Stop retrying if the status code is not 200. We'll check if the response status code is not 200, and then stop the retries.
+     If the response is valid (status 200), proceed with extracting the presigned_url and open the PDF.
+     */
+    func pollForResult(executionId: String, startTime: Date, timeOutInterval: Double = 900) {
         // Poll for the result of the Step Function execution
         guard let url = URL(string: "\(pollingUrl)/\(executionId)") else { return }
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
+        request.timeoutInterval = 60 // Set timeout to 1 minute (adjust as needed)
         
         // Perform the network request
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -116,13 +180,51 @@ class ViewController: UIViewController {
             }
             
             do {
-                // Parse the response to extract the presigned URL
-                if let responseDict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-                   let presignedUrl = responseDict["presigned_url"] as? String {
-                    print("Presigned URL received: \(presignedUrl)")
-                    
-                    // Open the PDF using the presigned URL
-                    self.openPDF(presignedUrl)
+                // Parse the response to extract the presignedUrl
+                if let responseDict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    if let statusCode = responseDict["statusCode"] as? Int {
+                        if statusCode == 200 {
+                            // Successfully received a valid response
+                            if let body = responseDict["body"] as? String,
+                               let jsonData = body.data(using: .utf8),
+                               let bodyDict = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any],
+                               let presignedUrl = bodyDict["presigned_url"] as? String {
+                                print("Presigned URL received: \(presignedUrl)")
+                                
+                                // Open the PDF using the presigned URL
+                                self.openPDF(presignedUrl)
+                                return
+                            } else {
+                                print("Presigned_url not received. Retrying...")
+                                if let status = responseDict["status"] as? String,
+                                   let message = responseDict["message"] as? String {
+                                    print("Job status: \(status), message: \(message)")
+                                }
+                            }
+                        } else {
+                            // If statusCode is not 200, retry
+                            print("Status code not 200. Retrying...")
+                        }
+                    } else {
+                        print("Error: Missing or invalid statusCode. Retrying...")
+                    }
+                } else {
+                    print("Response not serialize-able. Retrying...")
+                }
+                
+                // Check if 15 minutes (900 seconds) have passed
+                let elapsedTime = Date().timeIntervalSince(startTime)
+                if elapsedTime >= timeOutInterval {
+                    print("15 minutes have passed. Stopping polling.")
+                    DispatchQueue.main.async {
+                        self.submitButton.isEnabled = true
+                    }
+                    return
+                }
+        
+                // Poll again in 15 seconds if status is not complete
+                DispatchQueue.main.asyncAfter(deadline: .now() + 15) {
+                    self.pollForResult(executionId: executionId, startTime: startTime)
                 }
             } catch {
                 print("Error parsing polling result: \(error)")
