@@ -209,9 +209,6 @@ class ViewController: UIViewController {
                                        let presignedUrl = bodyDict["presigned_url"] as? String {
                                         print("Presigned URL received: \(presignedUrl)")
                                         self.notifyUserDownloadComplete(presignedUrl)
-                                        
-                                        // Open the PDF using the presigned URL
-                                        self.openPDF(presignedUrl)
                                         return
                                     } else {
                                         print("Could not parse the 'body' field of SUCCESS response")
@@ -271,17 +268,6 @@ class ViewController: UIViewController {
         task.resume()
     }
     
-    func openPDF(_ url: String) {
-        print("calling openPDF")
-        // Use Safari or WebView to open the presigned URL
-        if let url = URL(string: url) {
-            DispatchQueue.main.async {
-                UIApplication.shared.open(url)
-            }
-        }
-        print("end calling openPDF")
-    }
-    
     func requestNotificationPermission(completion: @escaping () -> Void) {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
             if granted {
@@ -301,27 +287,50 @@ class ViewController: UIViewController {
         // using your server or Apple's Push Notification service (APNs)
         print("Download complete! Presigned URL: \(url)")
         
+        // Store the presigned URL in UserDefaults so it can be accessed when the app is opened manually
+        UserDefaults.standard.set(url, forKey: "presigned_url")
+        
         // Your code here to trigger a notification to the user
-        sendLocalNotification(url: url)
+        self.sendLocalNotification(url: url)
     }
     
     // When the task completes and you have the presigned_url, trigger a local notification.
     func sendLocalNotification(url: String) {
-        print("inside sendLocalNotification")
-        let content = UNMutableNotificationContent()
-        content.title = "Download Complete"
-        content.body = "Your PDF is ready. Tap to view it."
-        content.userInfo = ["presigned_url": url]
-
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-
-        let request = UNNotificationRequest(identifier: "downloadComplete", content: content, trigger: trigger)
-
-        UNUserNotificationCenter.current().add(request) { (error) in
-            if let error = error {
-                print("Error scheduling notification: \(error)")
-            } else {
-                print("Notification scheduled successfully.")
+        DispatchQueue.main.async {
+            print("inside sendLocalNotification")
+            let content = UNMutableNotificationContent()
+            content.title = "Download Complete"
+            content.body = "Your PDF is ready. Tap to view it."
+            content.userInfo = ["presigned_url": url]
+            
+            // Add a custom action for the user to open the PDF
+            let openAction = UNNotificationAction(
+                identifier: "open_pdf_action",
+                title: "Open PDF",
+                options: [.foreground]  // This makes sure the app comes to the foreground when the user taps the notification
+            )
+            
+            let category = UNNotificationCategory(
+                identifier: "download_complete_category",
+                actions: [openAction],
+                intentIdentifiers: [],
+                options: []
+            )
+            
+            // Register the category with UNUserNotificationCenter
+            UNUserNotificationCenter.current().setNotificationCategories([category])
+            content.categoryIdentifier = "download_complete_category"
+            
+            // Trigger the notification immediately
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+            let request = UNNotificationRequest(identifier: "downloadComplete", content: content, trigger: trigger)
+            
+            UNUserNotificationCenter.current().add(request) { (error) in
+                if let error = error {
+                    print("Error scheduling notification: \(error)")
+                } else {
+                    print("Notification scheduled successfully.")
+                }
             }
         }
     }
@@ -338,22 +347,24 @@ class ViewController: UIViewController {
         // Assuming you've already configured APNs in your app
         // Use UNUserNotificationCenter to schedule a local notification.
         
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = message
-        content.sound = .default
-        
-        // You can add userInfo for deep linking to the app if needed
-        content.userInfo = userInfo
+        DispatchQueue.main.async {
+            let content = UNMutableNotificationContent()
+            content.title = title
+            content.body = message
+            content.sound = .default
+            
+            // You can add userInfo for deep linking to the app if needed
+            content.userInfo = userInfo
 
-        // Trigger notification immediately
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+            // Trigger notification immediately
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
 
-        let request = UNNotificationRequest(identifier: "errorNotification", content: content, trigger: trigger)
+            let request = UNNotificationRequest(identifier: "errorNotification", content: content, trigger: trigger)
 
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("Error scheduling push notification: \(error)")
+            UNUserNotificationCenter.current().add(request) { error in
+                if let error = error {
+                    print("Error scheduling push notification: \(error)")
+                }
             }
         }
     }

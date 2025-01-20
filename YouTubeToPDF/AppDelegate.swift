@@ -10,6 +10,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - App Lifecycle Methods
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Check if there is a presigned URL saved in UserDefaults
+        if let presignedUrl = UserDefaults.standard.string(forKey: "presigned_url") {
+            // Open the PDF immediately if the app was launched and the URL is available
+            if let url = URL(string: presignedUrl) {
+                DispatchQueue.main.async {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                }
+            }
+        }
+        
         // Request notification permission
         requestNotificationPermission()
         
@@ -50,8 +60,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let startTime = Date()
             
             // We will invoke the polling function from ViewController, if it's available
-            if let viewController = window?.rootViewController as? ViewController {
-                viewController.pollForResultInBackground(executionId: executionId, startTime: startTime)
+            DispatchQueue.main.async {
+                if let viewController = self.window?.rootViewController as? ViewController {
+                    viewController.pollForResultInBackground(executionId: executionId, startTime: startTime)
+                }
             }
             
             completionHandler(.newData)
@@ -93,6 +105,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 alert.addAction(UIAlertAction(title: "OK", style: .default))
                 self.window?.rootViewController?.present(alert, animated: true)
             }
+        } else if let presignedUrl = userInfo["presigned_url"] as? String {
+            UserDefaults.standard.set(presignedUrl, forKey: "presigned_url")  // Save the presigned URL
         }
         
         completionHandler(.newData)
@@ -142,15 +156,19 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
     // Called when the user taps on the notification
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        // Handle the user tapping on the notification
-        let userInfo = response.notification.request.content.userInfo
-        
-        if let error = userInfo["error"] as? String, error == "true" {
-            DispatchQueue.main.async {
-                let alert = UIAlertController(title: "Download Failed", message: "Something went wrong while processing your request. Please try again later.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-                self.window?.rootViewController?.present(alert, animated: true)
+        print ("inside userNotificationCenter")
+        // Check if the user tapped the "Open PDF" button
+        if response.actionIdentifier == "open_pdf_action" {
+            print("calling openPDF")
+            if let presignedUrl = response.notification.request.content.userInfo["presigned_url"] as? String {
+                // Call openPDF with the URL from the notification
+                if let url = URL(string: presignedUrl) {
+                    DispatchQueue.main.async {
+                        UIApplication.shared.open(url)
+                    }
+                }
             }
+            print("end calling openPDF")
         }
         
         completionHandler()
