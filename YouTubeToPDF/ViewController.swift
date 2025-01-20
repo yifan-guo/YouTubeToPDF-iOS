@@ -184,41 +184,75 @@ class ViewController: UIViewController {
                 if let responseDict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                     if let statusCode = responseDict["statusCode"] as? Int {
                         if statusCode == 200 {
-                            // Successfully received a valid response
-                            if let body = responseDict["body"] as? String,
-                               let jsonData = body.data(using: .utf8),
-                               let bodyDict = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any],
-                               let presignedUrl = bodyDict["presigned_url"] as? String {
-                                print("Presigned URL received: \(presignedUrl)")
-                                
-                                // Open the PDF using the presigned URL
-                                self.openPDF(presignedUrl)
-                                return
-                            } else {
-                                print("Presigned_url not received. Retrying...")
-                                if let status = responseDict["status"] as? String,
-                                   let message = responseDict["message"] as? String {
-                                    print("Job status: \(status), message: \(message)")
+                            if let status = responseDict["status"] as? String {
+                                if status == "SUCCEEDED" {
+                                    // Successfully completed execution
+                                    if let body = responseDict["body"] as? String,
+                                       let jsonData = body.data(using: .utf8),
+                                       let bodyDict = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any],
+                                       let presignedUrl = bodyDict["presigned_url"] as? String {
+                                        print("Presigned URL received: \(presignedUrl)")
+                                        
+                                        // Open the PDF using the presigned URL
+                                        self.openPDF(presignedUrl)
+                                        return
+                                    }
+                                } else if status == "RUNNING" {
+                                    // If it's still running, keep polling
+                                    print("Step Function is still running. Retrying...")
+                                    
+                                    // Check if 15 minutes have passed
+                                    let elapsedTime = Date().timeIntervalSince(startTime)
+                                    if elapsedTime >= timeOutInterval {
+                                        print("15 minutes have passed. Stopping polling.")
+                                        self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
+                                        return
+                                    }
+                                    
+                                    // Retry polling after a short delay (e.g., 15 seconds)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 15) {
+                                        self.pollForResult(executionId: executionId, startTime: startTime)
+                                    }
+                                } else {
+                                    print("Unexpected status: \(status)")
+                                    self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
+                                    return
                                 }
+                            } else {
+                                print("Missing or invalid status. Stopping polling.")
+                                if let errorBody = String(data: data, encoding: .utf8) {
+                                    print("Response Body: \(errorBody)")
+                                }
+                                self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
+                                return
                             }
                         } else {
-                            // If statusCode is not 200, retry
-                            print("Status code not 200. Retrying...")
+                            // If statusCode is not 200
+                            print("Received failed status code \(statusCode). Stopping polling.")
+                            if let message = responseDict["message"] as? String {
+                                print("Error message: \(message)")
+                            }
+                            self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
+                            return
                         }
                     } else {
                         print("Error: Missing or invalid statusCode. Retrying...")
+                        if let errorBody = String(data: data, encoding: .utf8) {
+                            print("Response Body: \(errorBody)")
+                        }
                     }
                 } else {
-                    print("Response not serialize-able. Retrying...")
+                    print("Unable to parse the response body. Retrying...")
+                    if let errorBody = String(data: data, encoding: .utf8) {
+                        print("Response Body: \(errorBody)")
+                    }
                 }
                 
                 // Check if 15 minutes (900 seconds) have passed
                 let elapsedTime = Date().timeIntervalSince(startTime)
                 if elapsedTime >= timeOutInterval {
                     print("15 minutes have passed. Stopping polling.")
-                    DispatchQueue.main.async {
-                        self.submitButton.isEnabled = true
-                    }
+                    self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
                     return
                 }
         
@@ -228,9 +262,7 @@ class ViewController: UIViewController {
                 }
             } catch {
                 print("Error parsing polling result: \(error)")
-                DispatchQueue.main.async {
-                    self.submitButton.isEnabled = true // Re-enable button if error occurs
-                }
+                self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
             }
         }
         
