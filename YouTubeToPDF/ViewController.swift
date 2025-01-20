@@ -159,8 +159,8 @@ class ViewController: UIViewController {
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.timeoutInterval = 60 // Set timeout to 1 minute (adjust as needed)
-        
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
         // Perform the network request
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
@@ -182,63 +182,59 @@ class ViewController: UIViewController {
             do {
                 // Parse the response to extract the presignedUrl
                 if let responseDict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                    if let statusCode = responseDict["statusCode"] as? Int {
-                        if statusCode == 200 {
-                            if let status = responseDict["status"] as? String {
-                                if status == "SUCCEEDED" {
-                                    // Successfully completed execution
-                                    if let body = responseDict["body"] as? String,
-                                       let jsonData = body.data(using: .utf8),
-                                       let bodyDict = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any],
-                                       let presignedUrl = bodyDict["presigned_url"] as? String {
-                                        print("Presigned URL received: \(presignedUrl)")
-                                        
-                                        // Open the PDF using the presigned URL
-                                        self.openPDF(presignedUrl)
-                                        return
-                                    }
-                                } else if status == "RUNNING" {
-                                    // If it's still running, keep polling
-                                    print("Step Function is still running. Retrying...")
-                                    
-                                    // Check if 15 minutes have passed
-                                    let elapsedTime = Date().timeIntervalSince(startTime)
-                                    if elapsedTime >= timeOutInterval {
-                                        print("15 minutes have passed. Stopping polling.")
-                                        self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
-                                        return
-                                    }
-                                    
-                                    // Retry polling after a short delay (e.g., 15 seconds)
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 15) {
-                                        self.pollForResult(executionId: executionId, startTime: startTime)
-                                    }
-                                } else {
-                                    print("Unexpected status: \(status)")
-                                    self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
-                                    return
-                                }
-                            } else {
-                                print("Missing or invalid status. Stopping polling.")
-                                if let errorBody = String(data: data, encoding: .utf8) {
-                                    print("Response Body: \(errorBody)")
-                                }
-                                self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
+                    if let status = responseDict["status"] as? String {
+                        if status == "SUCCEEDED" {
+                            print("found a SUCCEEDED")
+                            print("SUCCEDED responseDict: \(responseDict)")
+                            // Successfully completed execution
+                            if let body = responseDict["body"] as? String,
+                               let jsonData = body.data(using: .utf8),
+                               let bodyDict = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any],
+                               let presignedUrl = bodyDict["presigned_url"] as? String {
+                                print("Presigned URL received: \(presignedUrl)")
+                                
+                                // Open the PDF using the presigned URL
+                                self.openPDF(presignedUrl)
                                 return
+                            } else {
+                                print("Could not parse the success body")
+                                print ("data: \(data)")
+                                print("Response dict: \(responseDict)")
+                                if let httpResponse = response as? HTTPURLResponse {
+                                    print("HTTP Response Code: \(httpResponse.statusCode)")
+                                }
+                                if let body = responseDict["body"] as? String {
+                                    if let jsonData = body.data(using: .utf8) {
+                                        print("jsonData: \(jsonData)")
+                                        if let bodyDict = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] {
+                                            print("bodyDict: \(bodyDict)")
+                                            if let presignedUrl = bodyDict["presigned_url"] as? String {
+                                                print("presigned_url: \(presignedUrl)")
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                if let error = error {
+                                    print("Network error: \(error.localizedDescription)")
+                                }
+                                if let responseBody = String(data: data, encoding: .utf8) {
+                                    print("Response Body: \(responseBody)")
+                                }
+                                
                             }
+                        } else if status == "RUNNING" {
+                            // If it's still running, keep polling
+                            print("Step Function is still running. Retrying request to \(url)...")
                         } else {
-                            // If statusCode is not 200
-                            print("Received failed status code \(statusCode). Stopping polling.")
-                            if let message = responseDict["message"] as? String {
-                                print("Error message: \(message)")
-                            }
+                            print("Unexpected status: \(status)")
                             self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
                             return
                         }
                     } else {
-                        print("Error: Missing or invalid statusCode. Retrying...")
-                        if let errorBody = String(data: data, encoding: .utf8) {
-                            print("Response Body: \(errorBody)")
+                        print("Missing or invalid status. Retrying...")
+                        if let message = responseDict["message"] {
+                            print("Response Body message: \(message)")
                         }
                     }
                 } else {
@@ -257,7 +253,7 @@ class ViewController: UIViewController {
                 }
         
                 // Poll again in 15 seconds if status is not complete
-                DispatchQueue.main.asyncAfter(deadline: .now() + 15) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 60) {
                     self.pollForResult(executionId: executionId, startTime: startTime)
                 }
             } catch {
