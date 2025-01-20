@@ -180,51 +180,44 @@ class ViewController: UIViewController {
             }
             
             do {
-                // Parse the response to extract the presignedUrl
+                // Parse the response to extract the status and the body
                 if let responseDict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                     if let status = responseDict["status"] as? String {
                         if status == "SUCCEEDED" {
-                            print("found a SUCCEEDED")
-                            print("SUCCEDED responseDict: \(responseDict)")
-                            // Successfully completed execution
-                            if let body = responseDict["body"] as? String,
-                               let jsonData = body.data(using: .utf8),
-                               let bodyDict = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any],
-                               let presignedUrl = bodyDict["presigned_url"] as? String {
-                                print("Presigned URL received: \(presignedUrl)")
-                                
-                                // Open the PDF using the presigned URL
-                                self.openPDF(presignedUrl)
-                                return
-                            } else {
-                                print("Could not parse the success body")
-                                print ("data: \(data)")
-                                print("Response dict: \(responseDict)")
-                                if let httpResponse = response as? HTTPURLResponse {
-                                    print("HTTP Response Code: \(httpResponse.statusCode)")
-                                }
-                                if let body = responseDict["body"] as? String {
-                                    if let jsonData = body.data(using: .utf8) {
-                                        print("jsonData: \(jsonData)")
-                                        if let bodyDict = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] {
-                                            print("bodyDict: \(bodyDict)")
-                                            if let presignedUrl = bodyDict["presigned_url"] as? String {
-                                                print("presigned_url: \(presignedUrl)")
-                                            }
-                                        }
+                            print("found a SUCCEEDED response: \(responseDict)")
+                            
+                            // Now, handle the nested 'output' key which contains a stringified JSON
+                            if let outputString = responseDict["output"] as? String {
+                                // Parse the stringified JSON in 'output'
+                                if let outputData = outputString.data(using: .utf8),
+                                   let outputDict = try? JSONSerialization.jsonObject(with: outputData, options: []) as? [String: Any] {
+                                    
+                                    // Extract the presigned_url from the parsed output JSON
+                                    if let body = outputDict["body"] as? String,
+                                       let bodyData = body.data(using: .utf8),
+                                       let bodyDict = try? JSONSerialization.jsonObject(with: bodyData, options: []) as? [String: Any],
+                                       let presignedUrl = bodyDict["presigned_url"] as? String {
+                                        print("Presigned URL received: \(presignedUrl)")
+                                        
+                                        // Open the PDF using the presigned URL
+                                        self.openPDF(presignedUrl)
+                                        return
+                                    } else {
+                                        print("Could not parse the 'body' field of SUCCESS response")
+                                        print("responseDict: \(responseDict)")
                                     }
+                                } else {
+                                    print("Failed to parse 'output' JSON")
+                                    self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
+                                    return
                                 }
-                                
-                                if let error = error {
-                                    print("Network error: \(error.localizedDescription)")
-                                }
-                                if let responseBody = String(data: data, encoding: .utf8) {
-                                    print("Response Body: \(responseBody)")
-                                }
-                                
+                            } else {
+                                print("'output' key missing or invalid")
+                                self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
+                                return
                             }
                         } else if status == "RUNNING" {
-                            // If it's still running, keep polling
+                            // If it's still running, keep polling
                             print("Step Function is still running. Retrying request to \(url)...")
                         } else {
                             print("Unexpected status: \(status)")
