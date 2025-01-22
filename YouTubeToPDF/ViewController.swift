@@ -121,11 +121,17 @@ class ViewController: UIViewController {
         
         // Action to open the PDF
         let downloadAction = UIAlertAction(title: "View PDF", style: .default) { _ in
+            // Re-enable the submit button when the user taps "View PDF"
+            self.submitButton.isEnabled = true
+            
             self.openPDF(url)  // Call the openPDF function to open the URL
         }
         
         // Action to dismiss the alert
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+            // Re-enable the submit button when the user taps "Cancel"
+            self.submitButton.isEnabled = true
+        }
         
         // Add actions to the alert
         alert.addAction(downloadAction)
