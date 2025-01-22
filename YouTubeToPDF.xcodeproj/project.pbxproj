@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A4D14C1F2D4099CA00557DC0 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D14C1E2D4099CA00557DC0 /* AppState.swift */; };
 		A4E7C9772D2C6808007DA103 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E7C9762D2C6808007DA103 /* AppDelegate.swift */; };
 		A4E7C9792D2C6808007DA103 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E7C9782D2C6808007DA103 /* SceneDelegate.swift */; };
 		A4E7C97B2D2C6808007DA103 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E7C97A2D2C6808007DA103 /* ViewController.swift */; };
@@ -36,6 +37,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A4D14C1E2D4099CA00557DC0 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		A4D14C202D40AA1D00557DC0 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A4E7C9732D2C6808007DA103 /* YouTubeToPDF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YouTubeToPDF.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4E7C9762D2C6808007DA103 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A4E7C9782D2C6808007DA103 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -106,6 +109,8 @@
 				A4E7C97F2D2C680A007DA103 /* Assets.xcassets */,
 				A4E7C9812D2C680A007DA103 /* LaunchScreen.storyboard */,
 				A4E7C9842D2C680A007DA103 /* Info.plist */,
+				A4D14C1E2D4099CA00557DC0 /* AppState.swift */,
+				A4D14C202D40AA1D00557DC0 /* README.md */,
 			);
 			path = YouTubeToPDF;
 			sourceTree = "<group>";
@@ -261,6 +266,7 @@
 				A4E7C97B2D2C6808007DA103 /* ViewController.swift in Sources */,
 				A4E7C9772D2C6808007DA103 /* AppDelegate.swift in Sources */,
 				A4E7C9792D2C6808007DA103 /* SceneDelegate.swift in Sources */,
+				A4D14C1F2D4099CA00557DC0 /* AppState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

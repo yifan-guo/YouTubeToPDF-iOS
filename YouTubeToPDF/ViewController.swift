@@ -10,11 +10,48 @@ class ViewController: UIViewController {
     let pollingUrl = "https://bnwc9iszkk.execute-api.us-east-2.amazonaws.com/prod/status"
     
 
-                                                       
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Observe the custom notification
+        NotificationCenter.default.addObserver(self, selector: #selector(handleDownloadFinished(_:)), name: .didFinishDownloading, object: nil)
     }
     
+    // Handle the custom notification and update the UI
+   @objc func handleDownloadFinished(_ notification: Notification) {
+       // Retrieve the URL from the notification's userInfo
+       if let userInfo = notification.userInfo, let url = userInfo["url"] as? String {
+           // Update the UI or show the download popup
+           showDownloadPopup(url: url)
+       }
+   }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        // Show the popup if the flag is set
+        showPopupIfNeeded()
+    }
+
+    func showPopupIfNeeded() {
+        if AppState.shared.shouldShowPopup, let url = AppState.shared.downloadURL {
+            showDownloadPopup(url: url)
+            AppState.shared.shouldShowPopup = false // Reset after showing the popup
+        }
+    }
+    
+    // This method is called when the app is about to enter the foreground
+    @objc func appWillEnterForeground() {
+        // Trigger the UI update or perform actions that should happen when the app returns to the foreground
+        print("App entered foreground - UI should be updated")
+        // Update your UI or perform any necessary actions here
+    }
+    
+    // Unregister when the view controller goes away
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willEnterForegroundNotification, object: nil)
+    }
+
     @IBAction func submitButtonTapped(_ sender: UIButton) {
         guard let youtubeUrl = youtubeUrlTextField.text, !youtubeUrl.isEmpty else {
             print("YouTube URL is empty")
@@ -34,102 +71,7 @@ class ViewController: UIViewController {
     }
     
     func triggerStepFunction(youtubeUrl: String) {
-        guard let url = URL(string: apiGatewayUrl) else { return }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        
-        // Add body with YouTube URL or other required parameters
-        let requestBody: [String: Any] = ["youtube_url": youtubeUrl]
-        
-        do {
-            let jsonData = try JSONSerialization.data(withJSONObject: requestBody, options: [.withoutEscapingSlashes])
-            print("Request URL: \(url)")
-            print("Request Body: \(String(data: jsonData, encoding: .utf8) ?? "")")
-            request.httpBody = jsonData
-        } catch {
-            print("Error encoding request body: \(error)")
-            return
-        }
-        
-        // Set headers if needed (authentication, content type, etc.)
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        // Perform the network request
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                print("Error invoking Step Function: \(error)")
-                DispatchQueue.main.async {
-                    self.submitButton.isEnabled = true // Re-enable button if error occurs
-                }
-                return
-            }
-            
-            // Log the response
-            if let response = response as? HTTPURLResponse {
-                print("Response Status Code: \(response.statusCode)")
-                print("Response Headers: \(response.allHeaderFields)")
-                
-                if response.statusCode == 400, let data = data {
-                    // Log the body of the error response
-                    if let errorBody = String(data: data, encoding: .utf8) {
-                        print("Error Body: \(errorBody)")
-                    }
-                }
-            }
-        
-            guard let data = data else {
-                print("No data received from Step Function")
-                DispatchQueue.main.async {
-                    self.submitButton.isEnabled = true // Re-enable button if no data
-                }
-                return
-            }
-            
-            do {
-                // Parse the response to extract the execution ID or task status
-                if let responseDict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                    if let statusCode = responseDict["statusCode"] as? Int {
-                        if statusCode == 202 {
-                            if let body = responseDict["body"] as? String,
-                               let jsonData = body.data(using: .utf8),
-                               let bodyDict = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any],
-                               let executionId = bodyDict["job_id"] as? String {
-                                // Store the execution ID for polling the status later
-                                print("Step Function triggered successfully. Job ID: \(executionId). Polling for result")
-                                
-                                // Poll for the result (the presigned URL)
-                                let startTime = Date()      // Capture the start time when polling begins
-                                self.pollForResult(executionId: executionId, startTime: startTime)
-                            }
-                        } else {
-                            // Handle non-202 status codes
-                            print("Error: Received status code \(statusCode)")
-                            self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
-                            return
-                        }
-                    } else {
-                        // Handle missing statuscode
-                        print("Response is missing statusCode")
-                        if let errorBody = String(data: data, encoding: .utf8) {
-                            print("Response body: \(errorBody)")
-                        }
-                        self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
-                    }
-                } else {
-                    print("Unexpected response structure")
-                    if let errorBody = String(data: data, encoding: .utf8) {
-                        print("Response body: \(errorBody)")
-                    }
-                    self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
-                }
-            } catch {
-                print("Error parsing Step Function response: \(error)")
-                self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
-            }
-        }
-        
-        task.resume()
+        self.pollForResult(executionId: "abc", startTime: Date())
     }
     
     func showErrorAlert(message: String) {
@@ -148,114 +90,70 @@ class ViewController: UIViewController {
         }
     }
     
+    func sendLocalNotification(url: String) {
+        print("Inside sendLocalNotification")
+
+        let content = UNMutableNotificationContent()
+        content.title = "Download Complete"
+        content.body = "Your PDF is ready. Tap to view it."
+        content.userInfo = ["presigned_url": url]  // Attach URL in userInfo
+
+        // Set the trigger to fire immediately (1 second)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+
+        let request = UNNotificationRequest(identifier: "downloadComplete", content: content, trigger: trigger)
+
+        UNUserNotificationCenter.current().add(request) { (error) in
+            if let error = error {
+                print("Error scheduling notification: \(error)")
+            } else {
+                print("Notification scheduled successfully.")
+            }
+        }
+    }
+
+    
+    func showDownloadPopup(url: String) {
+        print("inside showDownloadPopup")
+        
+        // Create the alert controller
+        let alert = UIAlertController(title: "Download Complete", message: "Your PDF is ready. Tap below to view it.", preferredStyle: .alert)
+        
+        // Action to open the PDF
+        let downloadAction = UIAlertAction(title: "View PDF", style: .default) { _ in
+            self.openPDF(url)  // Call the openPDF function to open the URL
+        }
+        
+        // Action to dismiss the alert
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        // Add actions to the alert
+        alert.addAction(downloadAction)
+        alert.addAction(cancelAction)
+        
+        // Present the alert controller
+        DispatchQueue.main.async {
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+
+
     /*
      Retry for up to 15 minutes. We'll keep track of the time elapsed and ensure we don't keep retrying past 15 minutes.
      Stop retrying if the status code is not 200. We'll check if the response status code is not 200, and then stop the retries.
      If the response is valid (status 200), proceed with extracting the presigned_url and open the PDF.
      */
     func pollForResult(executionId: String, startTime: Date, timeOutInterval: Double = 900) {
-        // Poll for the result of the Step Function execution
-        guard let url = URL(string: "\(pollingUrl)/\(executionId)") else { return }
+        let url = "https://www.adobe.com/content/dam/cc/en/legal/terms/enterprise/pdfs/GeneralTerms-NA-2024v1.pdf"
         
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        // Perform the network request
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                print("Error polling for result: \(error)")
-                DispatchQueue.main.async {
-                    self.submitButton.isEnabled = true // Re-enable button if error occurs
-                }
-                return
-            }
-            
-            guard let data = data else {
-                print("No data received while polling")
-                DispatchQueue.main.async {
-                    self.submitButton.isEnabled = true // Re-enable button if no data
-                }
-                return
-            }
-            
-            do {
-                // Parse the response to extract the status and the body
-                if let responseDict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                    if let status = responseDict["status"] as? String {
-                        if status == "SUCCEEDED" {
-                            print("found a SUCCEEDED response: \(responseDict)")
-                            
-                            // Now, handle the nested 'output' key which contains a stringified JSON
-                            if let outputString = responseDict["output"] as? String {
-                                // Parse the stringified JSON in 'output'
-                                if let outputData = outputString.data(using: .utf8),
-                                   let outputDict = try? JSONSerialization.jsonObject(with: outputData, options: []) as? [String: Any] {
-                                    
-                                    // Extract the presigned_url from the parsed output JSON
-                                    if let body = outputDict["body"] as? String,
-                                       let bodyData = body.data(using: .utf8),
-                                       let bodyDict = try? JSONSerialization.jsonObject(with: bodyData, options: []) as? [String: Any],
-                                       let presignedUrl = bodyDict["presigned_url"] as? String {
-                                        print("Presigned URL received: \(presignedUrl)")
-                                        
-                                        // Open the PDF using the presigned URL
-                                        self.openPDF(presignedUrl)
-                                        return
-                                    } else {
-                                        print("Could not parse the 'body' field of SUCCESS response")
-                                        print("responseDict: \(responseDict)")
-                                    }
-                                } else {
-                                    print("Failed to parse 'output' JSON")
-                                    self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
-                                    return
-                                }
-                            } else {
-                                print("'output' key missing or invalid")
-                                self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
-                                return
-                            }
-                        } else if status == "RUNNING" {
-                            // If it's still running, keep polling
-                            print("Step Function is still running. Retrying request to \(url)...")
-                        } else {
-                            print("Unexpected status: \(status)")
-                            self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
-                            return
-                        }
-                    } else {
-                        print("Missing or invalid status. Retrying...")
-                        if let message = responseDict["message"] {
-                            print("Response Body message: \(message)")
-                        }
-                    }
-                } else {
-                    print("Unable to parse the response body. Retrying...")
-                    if let errorBody = String(data: data, encoding: .utf8) {
-                        print("Response Body: \(errorBody)")
-                    }
-                }
-                
-                // Check if 15 minutes (900 seconds) have passed
-                let elapsedTime = Date().timeIntervalSince(startTime)
-                if elapsedTime >= timeOutInterval {
-                    print("15 minutes have passed. Stopping polling.")
-                    self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
-                    return
-                }
+        UserDefaults.standard.set(url, forKey: "downloadURL")
         
-                // Poll again in 15 seconds if status is not complete
-                DispatchQueue.main.asyncAfter(deadline: .now() + 60) {
-                    self.pollForResult(executionId: executionId, startTime: startTime)
-                }
-            } catch {
-                print("Error parsing polling result: \(error)")
-                self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
-            }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            // Code to run after 3 seconds
+            print("This code runs after a 3-second delay.")
+            self.sendLocalNotification(url: url)
         }
-        
-        task.resume()
     }
     
     func openPDF(_ url: String) {
