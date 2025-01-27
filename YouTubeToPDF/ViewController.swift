@@ -10,7 +10,6 @@ class ViewController: UIViewController {
     let apiGatewayUrl = "https://bnwc9iszkk.execute-api.us-east-2.amazonaws.com/prod/convert"
     let pollingUrl = "https://bnwc9iszkk.execute-api.us-east-2.amazonaws.com/prod/status"
     
-
                                                        
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -252,118 +251,6 @@ class ViewController: UIViewController {
             self.present(alert, animated: true)
         }
     }
-    
-//    /*
-//     Retry for up to 15 minutes. We'll keep track of the time elapsed and ensure we don't keep retrying past 15 minutes.
-//     Stop retrying if the status code is not 200. We'll check if the response status code is not 200, and then stop the retries.
-//     If the response is valid (status 200), proceed with extracting the presigned_url and open the PDF.
-//     */
-//    func pollForResult(executionId: String, startTime: Date, timeOutInterval: Double = 900) {
-//        print("inside pollForResult")
-//        
-//        // Poll for the result of the Step Function execution
-//        guard let url = URL(string: "\(pollingUrl)/\(executionId)") else { return }
-//        print ("url: \(url)")
-//        
-//        var request = URLRequest(url: url)
-//        request.httpMethod = "GET"
-//        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-//
-//        // Perform the network request
-//        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-//            if let error = error {
-//                print("Error polling for result: \(error)")
-//                // Send push notification for polling error
-//                self.notifyUserDownloadFailed(message: "An error occurred while polling for the PDF. Tap to try again.", userInfo: self.errorUserInfo)
-//                return
-//            }
-//            
-//            guard let data = data else {
-//                print("No data received while polling")
-//                // Send push notification for no data received
-//                self.notifyUserDownloadFailed(message: "No data was received while polling for the PDF. Please try again.", userInfo: self.errorUserInfo)
-//                return
-//            }
-//            
-//            do {
-//                // Parse the response to extract the status and the body
-//                if let responseDict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-//                    if let status = responseDict["status"] as? String {
-//                        print("Polling status: \(status)")
-//                        if status == "SUCCEEDED" {
-//                            print("Polling finished successfully")
-//                            print("responseDict: \(responseDict)")
-//                            
-//                            // Now, handle the nested 'output' key which contains a stringified JSON
-//                            if let outputString = responseDict["output"] as? String {
-//                                // Parse the stringified JSON in 'output'
-//                                if let outputData = outputString.data(using: .utf8),
-//                                   let outputDict = try? JSONSerialization.jsonObject(with: outputData, options: []) as? [String: Any] {
-//                                    
-//                                    // Extract the presigned_url from the parsed output JSON
-//                                    if let body = outputDict["body"] as? String,
-//                                       let bodyData = body.data(using: .utf8),
-//                                       let bodyDict = try? JSONSerialization.jsonObject(with: bodyData, options: []) as? [String: Any],
-//                                       let presignedUrl = bodyDict["presigned_url"] as? String {
-//                                        print("Presigned URL received: \(presignedUrl)")
-//                                        self.notifyUserDownloadComplete(presignedUrl)
-//                                        return
-//                                    } else {
-//                                        print("Could not parse the 'body' field of SUCCESS response")
-//                                        print("responseDict: \(responseDict)")
-//                                        self.notifyUserDownloadFailed(message: "Could not parse the 'body' field of SUCCESS response", userInfo: self.errorUserInfo)
-//                                        return
-//                                    }
-//                                } else {
-//                                    print("Failed to parse 'output' JSON")
-//                                    self.notifyUserDownloadFailed(message: "Failed to parse 'output' JSON", userInfo: self.errorUserInfo)
-//                                    return
-//                                }
-//                            } else {
-//                                print("'output' key missing or invalid")
-//                                self.notifyUserDownloadFailed(message: "'output' key missing or invalid", userInfo: self.errorUserInfo)
-//                                return
-//                            }
-//                        } else if status == "RUNNING" {
-//                            // If it's still running, keep polling
-//                            print("Step Function is still running. Retrying request to \(url)...")
-//                        } else {
-//                            // If the job status is unexpected, send a push notification and show the error alert
-//                            print("Unexpected job status: \(status)")
-//                            self.notifyUserDownloadFailed(message: "The job encountered an unexpected status: \(status) while processing your PDF. Please try again later.", userInfo: self.errorUserInfo)
-//                            return
-//                        }
-//                    } else {
-//                        print("Invalid response format: missing or invalid status. Retrying...")
-//                        print("Response dict: \(responseDict)")
-//                    }
-//                } else {
-//                    print("Unable to parse the response body. Retrying...")
-//                    if let errorBody = String(data: data, encoding: .utf8) {
-//                        print("Response Body: \(errorBody)")
-//                    }
-//                }
-//                
-//                // Check if 15 minutes (900 seconds) have passed
-//                let elapsedTime = Date().timeIntervalSince(startTime)
-//                if elapsedTime >= timeOutInterval {
-//                    print("15 minutes have passed. Stopping polling.")
-//                    // Send push notification for timeout
-//                    self.notifyUserDownloadFailed(message: "The process took too long to complete. Please try again.", userInfo: self.errorUserInfo)
-//                }
-//        
-//                // Poll again in 15 seconds if status is not complete
-//                sleep(15)
-//                self.pollForResult(executionId: executionId, startTime: startTime)
-//            } catch {
-//                print("Error parsing polling result: \(error)")
-//                // Send push notification for unexpected error
-//                self.notifyUserDownloadFailed(message: "An unexpected error occurred while polling for the PDF. Please try again.", userInfo: self.errorUserInfo)
-//            }
-//        }
-//        
-//        task.resume()
-//    }
     
     func notifyUserDownloadComplete(_ url: String) {
         // This function should send a push notification to the user
