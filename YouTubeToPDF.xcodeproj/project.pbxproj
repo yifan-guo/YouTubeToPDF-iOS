@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A4D4F2442D44AF0900C5FCBA /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D4F2432D44AF0900C5FCBA /* AppState.swift */; };
 		A4E7C9772D2C6808007DA103 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E7C9762D2C6808007DA103 /* AppDelegate.swift */; };
 		A4E7C9792D2C6808007DA103 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E7C9782D2C6808007DA103 /* SceneDelegate.swift */; };
 		A4E7C97B2D2C6808007DA103 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E7C97A2D2C6808007DA103 /* ViewController.swift */; };
@@ -36,6 +37,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A4D4F2432D44AF0900C5FCBA /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		A4D4F2452D459A4C00C5FCBA /* YouTubeToPDF.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = YouTubeToPDF.entitlements; sourceTree = "<group>"; };
+		A4D4F2462D459BBD00C5FCBA /* YouTubeToPDF.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = YouTubeToPDF.entitlements; sourceTree = "<group>"; };
 		A4E7C9732D2C6808007DA103 /* YouTubeToPDF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YouTubeToPDF.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4E7C9762D2C6808007DA103 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A4E7C9782D2C6808007DA103 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -79,6 +83,7 @@
 		A4E7C96A2D2C6807007DA103 = {
 			isa = PBXGroup;
 			children = (
+				A4D4F2452D459A4C00C5FCBA /* YouTubeToPDF.entitlements */,
 				A4E7C9752D2C6808007DA103 /* YouTubeToPDF */,
 				A4E7C98C2D2C680A007DA103 /* YouTubeToPDFTests */,
 				A4E7C9962D2C680B007DA103 /* YouTubeToPDFUITests */,
@@ -99,6 +104,7 @@
 		A4E7C9752D2C6808007DA103 /* YouTubeToPDF */ = {
 			isa = PBXGroup;
 			children = (
+				A4D4F2462D459BBD00C5FCBA /* YouTubeToPDF.entitlements */,
 				A4E7C9762D2C6808007DA103 /* AppDelegate.swift */,
 				A4E7C9782D2C6808007DA103 /* SceneDelegate.swift */,
 				A4E7C97A2D2C6808007DA103 /* ViewController.swift */,
@@ -106,6 +112,7 @@
 				A4E7C97F2D2C680A007DA103 /* Assets.xcassets */,
 				A4E7C9812D2C680A007DA103 /* LaunchScreen.storyboard */,
 				A4E7C9842D2C680A007DA103 /* Info.plist */,
+				A4D4F2432D44AF0900C5FCBA /* AppState.swift */,
 			);
 			path = YouTubeToPDF;
 			sourceTree = "<group>";
@@ -261,6 +268,7 @@
 				A4E7C97B2D2C6808007DA103 /* ViewController.swift in Sources */,
 				A4E7C9772D2C6808007DA103 /* AppDelegate.swift in Sources */,
 				A4E7C9792D2C6808007DA103 /* SceneDelegate.swift in Sources */,
+				A4D4F2442D44AF0900C5FCBA /* AppState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -435,8 +443,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = YouTubeToPDF/YouTubeToPDF.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 78Z85K7J98;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = YouTubeToPDF/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -444,6 +454,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -462,8 +473,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = YouTubeToPDF/YouTubeToPDF.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 78Z85K7J98;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = YouTubeToPDF/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -471,6 +484,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
