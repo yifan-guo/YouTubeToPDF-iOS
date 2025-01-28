@@ -180,14 +180,16 @@ class ViewController: UIViewController {
                                let executionId = bodyDict["job_id"] as? String {
                                 // Store the execution ID for polling the status later
                                 print("Step Function triggered successfully. Job ID: \(executionId). Polling for result")
-                                
-                                // Save the executionId in UserDefaults
-                                UserDefaults.standard.set(executionId, forKey: "currentExecutionId")
+                                                            
+                                // Notify the user that the download is complete
+                                DispatchQueue.main.async {
+                                    self.notifyUserDownloadStarted(executionId: executionId)
+                                }
                             }
                         } else {
                             // Handle non-202 status codes
                             print("Error: Received status code \(statusCode)")
-                            self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
+                            self.notifyUserDownloadFailed(message: "An error occurred while processing your request. Please try again later.")
                             return
                         }
                     } else {
@@ -196,44 +198,22 @@ class ViewController: UIViewController {
                         if let errorBody = String(data: data, encoding: .utf8) {
                             print("Response body: \(errorBody)")
                         }
-                        self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
+                        self.notifyUserDownloadFailed(message: "An error occurred while processing your request. Please try again later.")
                     }
                 } else {
                     print("Unexpected response structure")
                     if let errorBody = String(data: data, encoding: .utf8) {
                         print("Response body: \(errorBody)")
                     }
-                    self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
+                    self.notifyUserDownloadFailed(message: "An error occurred while processing your request. Please try again later.")
                 }
             } catch {
                 print("Error parsing Step Function response: \(error)")
-                self.showErrorAlert(message: "An error occurred while processing your request. Please try again later.")
+                self.notifyUserDownloadFailed(message: "An error occurred while processing your request. Please try again later.")
             }
         }
         
         task.resume()
-    }
-    
-    func sendLocalNotification(url: String) {
-        print("Inside sendLocalNotification")
-
-        let content = UNMutableNotificationContent()
-        content.title = "Download Complete"
-        content.body = "Your PDF is ready. Tap to view it."
-        content.userInfo = ["presigned_url": url]  // Attach URL in userInfo
-
-        // Set the trigger to fire immediately (1 second)
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-
-        let request = UNNotificationRequest(identifier: "downloadComplete", content: content, trigger: trigger)
-
-        UNUserNotificationCenter.current().add(request) { (error) in
-            if let error = error {
-                print("Error scheduling notification: \(error)")
-            } else {
-                print("Notification scheduled successfully.")
-            }
-        }
     }
     
     func showErrorAlert(message: String) {
@@ -252,48 +232,37 @@ class ViewController: UIViewController {
         }
     }
     
-    func notifyUserDownloadComplete(_ url: String) {
-        // This function should send a push notification to the user
-        // using your server or Apple's Push Notification service (APNs)
-        print("Download complete! Presigned URL: \(url)")
-        
+    // This function sends a local notification to the user indicating the download started
+    // a local notification is scheduled and displayed on the device itself, without needing to communicate with a server.
+    func notifyUserDownloadStarted(executionId: String) {
         // Store the presigned URL in UserDefaults so it can be accessed when the app is opened manually
-        UserDefaults.standard.set(url, forKey: "downloadURL")
+        UserDefaults.standard.set(executionId, forKey: "executionId")
         
-        print("abc")
-        sleep(1)
-        print("def")
-        
-        // Your code here to trigger a notification to the user
-        self.sendLocalNotification(url: url)
+        sendPushNotification(title: "Download Started", message: "Your download has started. You'll receive another notification once it's complete.", identifier: "downloadStarted")
     }
     
-    
-
-    func notifyUserDownloadFailed(message: String, userInfo: [String: String]) {
+    // This function sends a local notification to the user indicating the download started
+    func notifyUserDownloadFailed(message: String) {
         // Send a notification when the download fails
-        sendPushNotification(title: "Download Failed", message: "Something went wrong while processing your request. Please reopen the app to try again.", userInfo: userInfo)
+        sendPushNotification(title: "Download Failed", message: "Something went wrong while processing your request. Please reopen the app to try again.", identifier: "errorNotification"
+        )
         
         // Show error alert to the user once they reopen the app
         showErrorAlert(message: message)
     }
 
-    func sendPushNotification(title: String, message: String, userInfo: [String: String]) {
-        // Assuming you've already configured APNs in your app
+    func sendPushNotification(title: String, message: String, identifier: String) {
         // Use UNUserNotificationCenter to schedule a local notification.
         
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = message
         content.sound = .default
-        
-        // You can add userInfo for deep linking to the app if needed
-        content.userInfo = userInfo
 
         // Trigger notification immediately
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
 
-        let request = UNNotificationRequest(identifier: "errorNotification", content: content, trigger: trigger)
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
 
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
