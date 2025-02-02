@@ -1,5 +1,5 @@
 import UIKit
-
+import PDFKit
 
 class ViewController: UIViewController {
     
@@ -13,6 +13,9 @@ class ViewController: UIViewController {
     
     var currentTab = "Explore" // Default active tab
 
+    // Create PDFView instance to display the PDF inside the app
+    var pdfView: PDFView!
+    
     // API URLs
     let apiGatewayUrl = "https://bnwc9iszkk.execute-api.us-east-2.amazonaws.com/prod/convert"
     let pollingUrl = "https://bnwc9iszkk.execute-api.us-east-2.amazonaws.com/prod/status"
@@ -23,6 +26,9 @@ class ViewController: UIViewController {
         
         // Set up the initial UI
         setupUI()
+        
+        // Add the PDFView to the view
+        setupPDFView()
         
         // Observe the custom notification
         NotificationCenter.default.addObserver(self, selector: #selector(handleDownloadFinished(_:)), name: .didFinishDownloading, object: nil)
@@ -39,6 +45,28 @@ class ViewController: UIViewController {
         setupBottomTabBar()
     }
     
+    func setupPDFView() {
+        // Initialize PDFView and set up the layout
+        pdfView = PDFView()
+        pdfView.translatesAutoresizingMaskIntoConstraints = false
+        pdfView.autoScales = true // Allow zooming of the PDF
+        pdfView.backgroundColor = .lightGray
+        
+        // Add the PDFView to the view
+        view.addSubview(pdfView)
+        
+        // Set constraints for PDFView
+        NSLayoutConstraint.activate([
+            pdfView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            pdfView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            pdfView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            pdfView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+        
+        // Initially hide the PDF view
+        pdfView.isHidden = true
+    }
+
     func styleSubmitButton() {
         // Button background color
         submitButton.backgroundColor = UIColor.systemGreen
@@ -230,13 +258,28 @@ class ViewController: UIViewController {
     }
     
     func openPDF(_ url: String) {
-        // Use Safari or WebView to open the presigned URL
-        if let url = URL(string: url) {
-            DispatchQueue.main.async {
-                UIApplication.shared.open(url)
+        // Convert the S3 presigned URL string to a URL object
+        guard let url = URL(string: url) else { return }
+        
+        // Perform the PDF loading on a background thread to avoid blocking the main thread
+        DispatchQueue.global(qos: .background).async {
+            // Try to load the PDF asynchronously
+            if let document = PDFDocument(url: url) {
+                // Once the PDF is loaded, update the UI on the main thread
+                DispatchQueue.main.async {
+                    self.pdfView.document = document
+                    self.pdfView.isHidden = false // Show the PDFView when the PDF is loaded
+                }
+            } else {
+                // Handle error if the PDF couldn't be loaded
+                DispatchQueue.main.async {
+                    print("Failed to load PDF from URL")
+                    // Optionally show an error message to the user
+                }
             }
         }
     }
+
 
     
    let errorUserInfo = ["error": "true"]
@@ -257,7 +300,31 @@ class ViewController: UIViewController {
         
     
         // Trigger the API call to start the process
-        triggerStepFunction(youtubeURL: youtubeUrl, deviceToken: deviceToken)
+//        triggerStepFunction(youtubeURL: youtubeUrl, deviceToken: deviceToken)
+        sendLocalNotification("https://www.adobe.com/content/dam/cc/en/legal/terms/enterprise/pdfs/GeneralTerms-NA-2024v1.pdf")
+    }
+    
+    // TODO remove this is temporary for testing
+    func sendLocalNotification(_ url: String) {
+        print("Inside sendLocalNotification")
+
+        let content = UNMutableNotificationContent()
+        content.title = "Download Complete"
+        content.body = "Your PDF is ready. Tap to view it."
+        content.userInfo = ["presigned_url": url]  // Attach URL in userInfo
+
+        // Set the trigger to fire immediately (1 second)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+
+        let request = UNNotificationRequest(identifier: "downloadComplete", content: content, trigger: trigger)
+
+        UNUserNotificationCenter.current().add(request) { (error) in
+            if let error = error {
+                print("Error scheduling notification: \(error)")
+            } else {
+                print("Notification scheduled successfully.")
+            }
+        }
     }
     
     
