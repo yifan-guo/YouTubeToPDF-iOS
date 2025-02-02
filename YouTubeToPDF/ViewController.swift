@@ -6,12 +6,18 @@ class ViewController: UIViewController {
     @IBOutlet weak var youtubeUrlTextField: UITextField!
     @IBOutlet weak var submitButton: UIButton!
     
+    // IBOutlet for the Explore scroll view
+    @IBOutlet weak var exploreScrollView: UIScrollView!
+    
     // Define variables for the bottom tab bar and buttons
     var bottomTabBar: UIView!
     var exploreButton: UIButton!
     var generateButton: UIButton!
     
     var currentTab = "Explore" // Default active tab
+    
+    // Store all downloaded PDFs as cards
+    var downloadedPDFs: [PDFCard] = []
 
     // Create PDFView instance to display the PDF inside the app
     var pdfView: PDFView!
@@ -46,16 +52,12 @@ class ViewController: UIViewController {
     }
     
     func setupPDFView() {
-        // Initialize PDFView and set up the layout
         pdfView = PDFView()
         pdfView.translatesAutoresizingMaskIntoConstraints = false
-        pdfView.autoScales = true // Allow zooming of the PDF
+        pdfView.autoScales = true
         pdfView.backgroundColor = .lightGray
-        
-        // Add the PDFView to the view
         view.addSubview(pdfView)
         
-        // Set constraints for PDFView
         NSLayoutConstraint.activate([
             pdfView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             pdfView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
@@ -63,7 +65,7 @@ class ViewController: UIViewController {
             pdfView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
         
-        // Initially hide the PDF view
+        // Initially hide PDFView
         pdfView.isHidden = true
     }
 
@@ -150,8 +152,7 @@ class ViewController: UIViewController {
                 ])
             }
         }
-            
-            
+        
         // Set the default active tab
         updateTabSelection(selectedTab: currentTab)
     }
@@ -176,30 +177,130 @@ class ViewController: UIViewController {
         updateTabSelection(selectedTab: "Generate")
     }
     
-    // Update the UI to reflect the selected tab
+    // Update the UI when a tab is selected
     private func updateTabSelection(selectedTab: String) {
         currentTab = selectedTab
         print("Selected Tab: \(selectedTab)")
 
-        // Change background colors for the view based on the selected tab
+        // Show/Hide UI elements based on the selected tab
         switch selectedTab {
         case "Explore":
-            view.backgroundColor = .darkGray
+            // Hide the YouTube URL text field and submit button when Explore tab is selected
+            exploreScrollView.isHidden = false
+            youtubeUrlTextField.isHidden = true
+            submitButton.isHidden = true
+            
+            // Optionally update the background to show that Explore is selected
+            exploreButton.backgroundColor = UIColor.systemGreen
+            generateButton.backgroundColor = UIColor.darkGray
+            
+            // Update the Explore tab UI to show the downloaded PDFs
+            updateExploreTabUI()
         case "Generate":
-            view.backgroundColor = .lightGray
+            // Show the YouTube URL text field and submit button when Generate tab is selected
+            exploreScrollView.isHidden = true
+            youtubeUrlTextField.isHidden = false
+            submitButton.isHidden = false
+
+            // Highlight the Generate button and dim the Explore button
+            generateButton.backgroundColor = UIColor.systemGreen
+            exploreButton.backgroundColor = UIColor.darkGray
         default:
             break
         }
     }
 
+    // Other methods for the "Generate" tab and handling downloads...
+
+    
     // Handle the custom notification and update the UI
    @objc func handleDownloadFinished(_ notification: Notification) {
        // Retrieve the URL from the notification's userInfo
        if let userInfo = notification.userInfo, let url = userInfo["url"] as? String {
            // Update the UI or show the download popup
-           showDownloadPopup(url: url)
+//           showDownloadPopup(url: url)
+           
+           self.submitButton.isEnabled = true
+           
+           // Add the downloaded PDF to the list and update UI
+           addDownloadedPDF(url: url)
        }
-   }
+    }
+    
+    func addDownloadedPDF(url: String) {
+        // Create a new PDF card with the current timestamp
+        let newPDFCard = PDFCard(url: url, timestamp: Date())
+        
+        // Append it to the list of downloaded PDFs
+        downloadedPDFs.append(newPDFCard)
+        
+        // Update the UI to display the new PDF card in the Explore tab
+        updateExploreTabUI()
+    }
+    
+    func updateExploreTabUI() {
+        // Remove all existing subviews from the Explore scroll view
+        for subview in exploreScrollView.subviews {
+            subview.removeFromSuperview()
+        }
+
+        var lastYPosition: CGFloat = 20
+        
+        // Loop through all the downloaded PDFs and create "cards" for each
+        for (index, pdf) in downloadedPDFs.enumerated() {
+            // Create the card view for each PDF
+            let cardView = createCardView(for: pdf)
+            cardView.frame = CGRect(x: 20, y: lastYPosition, width: self.view.frame.width - 40, height: 100)
+            exploreScrollView.addSubview(cardView)
+            
+            lastYPosition = cardView.frame.maxY + 20
+        }
+
+        // Set the content size of the scroll view so that it is scrollable
+        exploreScrollView.contentSize = CGSize(width: self.view.frame.width, height: lastYPosition)
+    }
+
+    // Create a custom "card" for each downloaded PDF
+    func createCardView(for pdfCard: PDFCard) -> UIView {
+        let cardView = UIView()
+        cardView.backgroundColor = .white
+        cardView.layer.cornerRadius = 10
+        cardView.layer.shadowColor = UIColor.black.cgColor
+        cardView.layer.shadowOpacity = 0.1
+        cardView.layer.shadowOffset = CGSize(width: 0, height: 2)
+        cardView.layer.shadowRadius = 4
+        
+        let titleLabel = UILabel()
+        titleLabel.text = "Generated PDF"
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        titleLabel.textColor = .black
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        cardView.addSubview(titleLabel)
+        
+        let timestampLabel = UILabel()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        timestampLabel.text = "Downloaded: \(dateFormatter.string(from: pdfCard.timestamp))"
+        timestampLabel.font = UIFont.systemFont(ofSize: 12)
+        timestampLabel.textColor = .gray
+        timestampLabel.translatesAutoresizingMaskIntoConstraints = false
+        cardView.addSubview(timestampLabel)
+        
+        // Set up constraints for the labels
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 10),
+            titleLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 10),
+            titleLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -10),
+            
+            timestampLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5),
+            timestampLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 10),
+            timestampLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -10),
+            timestampLabel.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -10)
+        ])
+        
+        return cardView
+    }
+
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
