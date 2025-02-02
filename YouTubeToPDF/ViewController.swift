@@ -14,10 +14,67 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Set the background color to dark
+        self.view.backgroundColor = UIColor.black
+        
+        // Set up the initial UI
+        setupUI()
+        
         // Observe the custom notification
         NotificationCenter.default.addObserver(self, selector: #selector(handleDownloadFinished(_:)), name: .didFinishDownloading, object: nil)
     }
     
+    // MARK: - UI Setup
+    func setupUI() {
+        // Set the background color to dark
+        self.view.backgroundColor = UIColor.black
+        
+        // Stylize submit button (using helper function)
+        styleSubmitButton()
+        
+        // Stylize YouTube URL text field
+        styleYoutubeUrlTextField()
+    }
+    
+    func styleSubmitButton() {
+        // Button background color
+        submitButton.backgroundColor = UIColor.systemGreen
+        
+        // Button text color
+        submitButton.setTitleColor(.white, for: .normal)
+        
+        // Button font and size
+        submitButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
+        
+        // Button corner radius and shadow for better visibility
+        submitButton.layer.cornerRadius = 12
+        submitButton.layer.shadowColor = UIColor.black.cgColor
+        submitButton.layer.shadowOffset = CGSize(width: 0, height: 4)
+        submitButton.layer.shadowOpacity = 0.2
+        submitButton.layer.shadowRadius = 6
+    }
+    
+    func styleYoutubeUrlTextField() {
+        // Set text field background color to light gray for contrast
+        youtubeUrlTextField.backgroundColor = UIColor.darkGray
+        
+        // Set text field text color to white for better visibility
+        youtubeUrlTextField.textColor = .white
+        
+        // Set placeholder text color for contrast
+        youtubeUrlTextField.attributedPlaceholder = NSAttributedString(
+            string: "Enter YouTube URL",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray]
+        )
+        
+        // Set text field font and size
+        youtubeUrlTextField.font = UIFont.systemFont(ofSize: 16)
+        
+        // Set border radius for the text field
+        youtubeUrlTextField.layer.cornerRadius = 8
+        youtubeUrlTextField.layer.masksToBounds = true
+    }
+
     // Handle the custom notification and update the UI
    @objc func handleDownloadFinished(_ notification: Notification) {
        // Retrieve the URL from the notification's userInfo
