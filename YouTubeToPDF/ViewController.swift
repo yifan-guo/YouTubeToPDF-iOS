@@ -6,6 +6,13 @@ class ViewController: UIViewController {
     @IBOutlet weak var youtubeUrlTextField: UITextField!
     @IBOutlet weak var submitButton: UIButton!
     
+    // Define variables for the bottom tab bar and buttons
+    var bottomTabBar: UIView!
+    var exploreButton: UIButton!
+    var generateButton: UIButton!
+    
+    var currentTab = "Explore" // Default active tab
+
     // API URLs
     let apiGatewayUrl = "https://bnwc9iszkk.execute-api.us-east-2.amazonaws.com/prod/convert"
     let pollingUrl = "https://bnwc9iszkk.execute-api.us-east-2.amazonaws.com/prod/status"
@@ -13,9 +20,6 @@ class ViewController: UIViewController {
                                                        
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Set the background color to dark
-        self.view.backgroundColor = UIColor.black
         
         // Set up the initial UI
         setupUI()
@@ -26,14 +30,13 @@ class ViewController: UIViewController {
     
     // MARK: - UI Setup
     func setupUI() {
-        // Set the background color to dark
-        self.view.backgroundColor = UIColor.black
+//        // Stylize submit button (using helper function)
+//        styleSubmitButton()
+//        
+//        // Stylize YouTube URL text field
+//        styleYoutubeUrlTextField()
         
-        // Stylize submit button (using helper function)
-        styleSubmitButton()
-        
-        // Stylize YouTube URL text field
-        styleYoutubeUrlTextField()
+        setupBottomTabBar()
     }
     
     func styleSubmitButton() {
@@ -73,6 +76,92 @@ class ViewController: UIViewController {
         // Set border radius for the text field
         youtubeUrlTextField.layer.cornerRadius = 8
         youtubeUrlTextField.layer.masksToBounds = true
+    }
+
+    // Set up the bottom tab bar with buttons for each feature
+    private func setupBottomTabBar() {
+        // Create the bottom tab bar container
+        bottomTabBar = UIView()
+        bottomTabBar.translatesAutoresizingMaskIntoConstraints = false
+        bottomTabBar.backgroundColor = UIColor.darkGray
+        bottomTabBar.layer.cornerRadius = 15
+        bottomTabBar.layer.shadowOpacity = 0.5
+        bottomTabBar.layer.shadowRadius = 5
+        bottomTabBar.layer.shadowOffset = CGSize(width: 0, height: -2)
+        
+        view.addSubview(bottomTabBar)
+
+        // Set up constraints for the bottom tab bar
+        NSLayoutConstraint.activate([
+            bottomTabBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            bottomTabBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            bottomTabBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            bottomTabBar.heightAnchor.constraint(equalToConstant: 60)
+        ])
+
+        // Create the buttons for each tab
+        exploreButton = createTabButton(title: "Explore", action: #selector(exploreTapped))
+        generateButton = createTabButton(title: "Generate", action: #selector(generateTapped))
+
+        // Add buttons to the bottom tab bar
+        bottomTabBar.addSubview(exploreButton)
+        bottomTabBar.addSubview(generateButton)
+
+        // Set up button constraints inside the bottom tab bar
+        let buttons = [exploreButton, generateButton]
+        let buttonWidth = (view.frame.width - 40) / CGFloat(buttons.count) // Adjust width based on screen size
+
+        for (index, button) in buttons.enumerated() {
+            if let unwrappedButton = button {
+                unwrappedButton.translatesAutoresizingMaskIntoConstraints = false
+                NSLayoutConstraint.activate([
+                    unwrappedButton.topAnchor.constraint(equalTo: bottomTabBar.topAnchor),
+                    unwrappedButton.bottomAnchor.constraint(equalTo: bottomTabBar.bottomAnchor),
+                    unwrappedButton.widthAnchor.constraint(equalToConstant: buttonWidth),
+                    unwrappedButton.leftAnchor.constraint(equalTo: bottomTabBar.leftAnchor, constant: CGFloat(index) * buttonWidth)
+                ])
+            }
+        }
+            
+            
+        // Set the default active tab
+        updateTabSelection(selectedTab: currentTab)
+    }
+
+    // Create a reusable tab button with a title and action
+    private func createTabButton(title: String, action: Selector) -> UIButton {
+        let button = UIButton()
+        button.setTitle(title, for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        button.addTarget(self, action: action, for: .touchUpInside)
+        button.layer.cornerRadius = 8
+        return button
+    }
+
+    // Tab button actions
+    @objc private func exploreTapped() {
+        updateTabSelection(selectedTab: "Explore")
+    }
+
+    @objc private func generateTapped() {
+        updateTabSelection(selectedTab: "Generate")
+    }
+    
+    // Update the UI to reflect the selected tab
+    private func updateTabSelection(selectedTab: String) {
+        currentTab = selectedTab
+        print("Selected Tab: \(selectedTab)")
+
+        // Change background colors for the view based on the selected tab
+        switch selectedTab {
+        case "Explore":
+            view.backgroundColor = .darkGray
+        case "Generate":
+            view.backgroundColor = .lightGray
+        default:
+            break
+        }
     }
 
     // Handle the custom notification and update the UI
