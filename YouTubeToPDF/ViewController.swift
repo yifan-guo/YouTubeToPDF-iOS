@@ -338,7 +338,7 @@ class ViewController: UIViewController {
                 subview.removeFromSuperview()
             }
 
-            var lastYPosition: CGFloat = 20
+            var lastYPosition: CGFloat = 60 // Add space between header and first card (e.g., 60 points)
             
             // Loop through all the downloaded PDFs and create "cards" for each
             for (index, pdf) in self.downloadedPDFs.enumerated() {
@@ -373,6 +373,7 @@ class ViewController: UIViewController {
         cardView.layer.shadowOffset = CGSize(width: 0, height: 2)
         cardView.layer.shadowRadius = 4
 
+        // Title label
         let titleLabel = UILabel()
         titleLabel.text = "Generated PDF"
         titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
@@ -380,6 +381,7 @@ class ViewController: UIViewController {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         cardView.addSubview(titleLabel)
 
+        // Timestamp label
         let timestampLabel = UILabel()
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -401,7 +403,7 @@ class ViewController: UIViewController {
             timestampLabel.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -10)
         ])
 
-        // Add tap gesture recognizer to the card
+        // Add tap gesture recognizer to the card to open the PDF
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cardTapped(_:)))
         cardView.addGestureRecognizer(tapGesture)
         cardView.isUserInteractionEnabled = true
@@ -410,9 +412,111 @@ class ViewController: UIViewController {
         print("Associating PDF card: \(pdfCard.url)")
         objc_setAssociatedObject(cardView, &cardKey, pdfCard, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
 
+        // Create the action "bubbles" for each card: Print, Share, Delete
+        let buttonSize: CGFloat = 30  // Smaller button size
+        let bubblePadding: CGFloat = 10 // Padding from card edges
+
+        // Print Button (using system icon)
+        let printButton = UIButton()
+        printButton.setImage(UIImage(systemName: "printer"), for: .normal)
+        printButton.tintColor = .black
+        printButton.translatesAutoresizingMaskIntoConstraints = false
+        printButton.addTarget(self, action: #selector(printPDF(_:)), for: .touchUpInside)
+        cardView.addSubview(printButton)
+        
+        // Share Button (using system icon)
+        let shareButton = UIButton()
+        shareButton.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
+        shareButton.tintColor = .black
+        shareButton.translatesAutoresizingMaskIntoConstraints = false
+        shareButton.addTarget(self, action: #selector(sharePDF(_:)), for: .touchUpInside)
+        cardView.addSubview(shareButton)
+        
+        // Delete Button (using system icon)
+        let deleteButton = UIButton()
+        deleteButton.setImage(UIImage(systemName: "trash"), for: .normal)
+        deleteButton.tintColor = .black
+        deleteButton.translatesAutoresizingMaskIntoConstraints = false
+        deleteButton.addTarget(self, action: #selector(deletePDF(_:)), for: .touchUpInside)
+        cardView.addSubview(deleteButton)
+
+        // Constraints for buttons (position them in the bottom right corner)
+        NSLayoutConstraint.activate([
+            printButton.widthAnchor.constraint(equalToConstant: buttonSize),
+            printButton.heightAnchor.constraint(equalToConstant: buttonSize),
+            printButton.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -bubblePadding),
+            printButton.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -bubblePadding),
+
+            shareButton.widthAnchor.constraint(equalToConstant: buttonSize),
+            shareButton.heightAnchor.constraint(equalToConstant: buttonSize),
+            shareButton.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -bubblePadding),
+            shareButton.trailingAnchor.constraint(equalTo: printButton.leadingAnchor, constant: -bubblePadding),
+
+            deleteButton.widthAnchor.constraint(equalToConstant: buttonSize),
+            deleteButton.heightAnchor.constraint(equalToConstant: buttonSize),
+            deleteButton.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -bubblePadding),
+            deleteButton.trailingAnchor.constraint(equalTo: shareButton.leadingAnchor, constant: -bubblePadding)
+        ])
+        
         return cardView
     }
+
     
+    @objc func printPDF(_ sender: UIButton) {
+        guard let pdfCard = objc_getAssociatedObject(sender.superview!, &cardKey) as? PDFCard else { return }
+        guard let pdfURL = URL(string: pdfCard.url) else { return }
+        
+        // Create print controller
+        let printController = UIPrintInteractionController.shared
+        let printInfo = UIPrintInfo.printInfo()
+        printInfo.outputType = .general
+        
+        printController.printInfo = printInfo
+        printController.printingItem = pdfURL
+        
+        printController.present(animated: true, completionHandler: nil)
+    }
+
+    @objc func sharePDF(_ sender: UIButton) {
+        guard let pdfCard = objc_getAssociatedObject(sender.superview!, &cardKey) as? PDFCard else { return }
+        guard let pdfURL = URL(string: pdfCard.url) else { return }
+        
+        let activityController = UIActivityViewController(activityItems: [pdfURL], applicationActivities: nil)
+        
+        // Exclude certain activities if desired (e.g., AirDrop)
+        activityController.excludedActivityTypes = [.airDrop, .postToFacebook, .postToTwitter]
+        
+        present(activityController, animated: true, completion: nil)
+    }
+
+    
+    @objc func deletePDF(_ sender: UIButton) {
+        guard let pdfCard = objc_getAssociatedObject(sender.superview!, &cardKey) as? PDFCard else { return }
+        
+        // Create the alert controller for deletion confirmation
+        let alertController = UIAlertController(title: "Delete PDF", message: "Are you sure you want to delete this PDF?", preferredStyle: .alert)
+        
+        // Cancel Action
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        // Delete Action
+        let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { _ in
+            // Remove the PDF from the list and update the UI
+            self.downloadedPDFs.removeAll { $0.url == pdfCard.url }
+            self.updateExploreTabUI()
+            
+            print("PDF deleted: \(pdfCard.url)")
+        }
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(deleteAction)
+        
+        // Show the alert controller
+        self.present(alertController, animated: true, completion: nil)
+    }
+
+
+
     @objc func cardTapped(_ sender: UITapGestureRecognizer) {
         guard let cardView = sender.view else { return }
         
