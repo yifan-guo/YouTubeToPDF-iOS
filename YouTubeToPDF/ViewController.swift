@@ -21,6 +21,9 @@ class ViewController: UIViewController {
     var exploreButton: UIButton!
     var generateButton: UIButton!
     
+    var exploreHeaderLabel: UILabel!
+    var generateHeaderLabel: UILabel!
+    
     var currentTab = "Explore" // Default active tab
     
     
@@ -37,6 +40,9 @@ class ViewController: UIViewController {
                                                        
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Set up the UI and headers programmatically
+        setupTabHeaders()
         
         // Set up the initial UI
         setupUI()
@@ -73,6 +79,43 @@ class ViewController: UIViewController {
         
         setupBottomTabBar()
     }
+
+    func setupTabHeaders() {
+        // set up the "Explore" header
+        exploreHeaderLabel = UILabel()
+        exploreHeaderLabel.text = "My PDFs" // Title for Explore tab
+        exploreHeaderLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        exploreHeaderLabel.textColor = .black
+        exploreHeaderLabel.textAlignment = .center
+        exploreHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(exploreHeaderLabel)
+        
+        // Add constraints to position the header label at the top
+        NSLayoutConstraint.activate([
+            exploreHeaderLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            exploreHeaderLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            exploreHeaderLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            exploreHeaderLabel.heightAnchor.constraint(equalToConstant: 40)
+        ])
+        
+        // set up the generate header
+        generateHeaderLabel = UILabel()
+        generateHeaderLabel.text = "Create PDF" // Title for generate tab
+        generateHeaderLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        generateHeaderLabel.textColor = .black
+        generateHeaderLabel.textAlignment = .center
+        generateHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(generateHeaderLabel)
+        
+        // Add constraints to position the header label at the top
+        NSLayoutConstraint.activate([
+            generateHeaderLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            generateHeaderLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            generateHeaderLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            generateHeaderLabel.heightAnchor.constraint(equalToConstant: 40)
+        ])
+    }
+
     
     func setupPDFView() {
         pdfView = PDFView()
@@ -212,6 +255,8 @@ class ViewController: UIViewController {
             exploreScrollView.isHidden = false
             youtubeUrlTextField.isHidden = true
             submitButton.isHidden = true
+            exploreHeaderLabel.isHidden = false // Show the header for Explore tab
+            generateHeaderLabel.isHidden = true
             
             // Optionally update the background to show that Explore is selected
             exploreButton.backgroundColor = UIColor.systemGreen
@@ -224,6 +269,8 @@ class ViewController: UIViewController {
             exploreScrollView.isHidden = true
             youtubeUrlTextField.isHidden = false
             submitButton.isHidden = false
+            exploreHeaderLabel.isHidden = true // Hide the header for Explore tab
+            generateHeaderLabel.isHidden = false
 
             // Highlight the Generate button and dim the Explore button
             generateButton.backgroundColor = UIColor.systemGreen
