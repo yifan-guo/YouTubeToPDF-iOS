@@ -679,12 +679,13 @@ class ViewController: UIViewController {
         
         // Disable the button to prevent multiple submissions
         submitButton.isEnabled = false
-        
-        sleep(2)
-    
+            
         // Trigger the API call to start the process
-//        triggerStepFunction(youtubeURL: youtubeUrl, deviceToken: deviceToken)
-        sendLocalNotification("https://www.adobe.com/content/dam/cc/en/legal/terms/enterprise/pdfs/GeneralTerms-NA-2024v1.pdf")
+        triggerStepFunction(youtubeURL: youtubeUrl, deviceToken: deviceToken)
+        
+        // Only for local testing where you don't want to incur AWS and Proxy usage
+        // sleep(2)
+        // sendLocalNotification("https://www.adobe.com/content/dam/cc/en/legal/terms/enterprise/pdfs/GeneralTerms-NA-2024v1.pdf")
     }
     
     // TODO remove this is temporary for testing
