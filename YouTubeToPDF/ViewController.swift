@@ -332,14 +332,10 @@ class ViewController: UIViewController {
         DispatchQueue.main.async {
             print("Updating Explore Tab UI...")  // Debug print
             
-            // Remove all existing subviews from the Explore scroll view
-            for subview in self.exploreScrollView.subviews {
-                print("Removing subview: \(subview)")  // Debug print
-                subview.removeFromSuperview()
-            }
+            // Do not remove old cards; instead, just add the new ones
 
-            var lastYPosition: CGFloat = 60 // Add space between header and first card (e.g., 60 points)
-            
+            var lastYPosition: CGFloat = 60  // Ensure there's space between the header and the first card
+
             // Loop through all the downloaded PDFs and create "cards" for each
             for (index, pdf) in self.downloadedPDFs.enumerated() {
                 // Create the card view for each PDF
@@ -641,23 +637,30 @@ class ViewController: UIViewController {
         
         // Perform the PDF loading on a background thread to avoid blocking the main thread
         DispatchQueue.global(qos: .background).async {
-            // Try to load the PDF asynchronously
-            if let document = PDFDocument(url: url) {
-                // Once the PDF is loaded, update the UI on the main thread
-                DispatchQueue.main.async {
-                    self.pdfView.document = document
-                    self.pdfView.isHidden = false // Show the PDFView when the PDF is loaded
-                    print("PDF loaded successfully")
-                    
-                    // Create a back button
-                    self.addBackButton()
+            do {
+                // Download the PDF data from the URL asynchronously
+                let pdfData = try Data(contentsOf: url)
+                
+                // Once the data is downloaded, we need to display the PDF
+                if let document = PDFDocument(data: pdfData) {
+                    // Once the PDF is loaded, update the UI on the main thread
+                    DispatchQueue.main.async {
+                        self.pdfView.document = document
+                        self.pdfView.isHidden = false // Show the PDFView when the PDF is loaded
+                        print("PDF loaded successfully")
+                        
+                        // Create a back button
+                        self.addBackButton()
+                    }
+                } else {
+                    // Handle error if the PDF couldn't be loaded
+                    DispatchQueue.main.async {
+                        print("Failed to load PDF document")
+
+                    }
                 }
-            } else {
-                // Handle error if the PDF couldn't be loaded
-                DispatchQueue.main.async {
-                    print("Failed to load PDF from URL")
-                    // Optionally show an error message to the user
-                }
+            } catch {
+                print("Failed to download PDF from URL: \(error.localizedDescription)")
             }
         }
     }
