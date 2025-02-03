@@ -44,6 +44,9 @@ class ViewController: UIViewController {
         // Set up the UI and headers programmatically
         setupTabHeaders()
         
+        // Load saved PDFs from persistent storage
+        loadPDFs()
+        
         // Set up the initial UI
         setupUI()
         
@@ -332,7 +335,10 @@ class ViewController: UIViewController {
         DispatchQueue.main.async {
             print("Updating Explore Tab UI...")  // Debug print
             
-            // Do not remove old cards; instead, just add the new ones
+            // First, remove any existing card views
+            for subview in self.exploreScrollView.subviews {
+                subview.removeFromSuperview()
+            }
 
             var lastYPosition: CGFloat = 60  // Ensure there's space between the header and the first card
 
@@ -487,28 +493,72 @@ class ViewController: UIViewController {
 
     
     @objc func deletePDF(_ sender: UIButton) {
-        guard let pdfCard = objc_getAssociatedObject(sender.superview!, &cardKey) as? PDFCard else { return }
-        
+        guard let cardView = sender.superview,
+              let pdfCard = objc_getAssociatedObject(cardView, &cardKey) as? PDFCard else {
+            print("Could not find the associated PDF card")
+            return
+        }
+
         // Create the alert controller for deletion confirmation
         let alertController = UIAlertController(title: "Delete PDF", message: "Are you sure you want to delete this PDF?", preferredStyle: .alert)
-        
+
         // Cancel Action
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        
+
         // Delete Action
         let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { _ in
-            // Remove the PDF from the list and update the UI
-            self.downloadedPDFs.removeAll { $0.url == pdfCard.url }
+            // 1. Remove the PDF from the list of downloaded PDFs
+            if let index = self.downloadedPDFs.firstIndex(where: { $0.url == pdfCard.url }) {
+                self.downloadedPDFs.remove(at: index)
+                print("PDF deleted from model: \(pdfCard.url)")
+            }
+
+            // 2. Remove the card view from the scroll view (UI)
+            cardView.removeFromSuperview()
+
+            // 3. Persist the updated PDF list (you should save it to UserDefaults or another storage)
+            self.savePDFs()
+
+            // 4. Update the UI (rebuild the remaining cards)
             self.updateExploreTabUI()
-            
-            print("PDF deleted: \(pdfCard.url)")
         }
-        
+
         alertController.addAction(cancelAction)
         alertController.addAction(deleteAction)
-        
+
         // Show the alert controller
         self.present(alertController, animated: true, completion: nil)
+    }
+
+    func savePDFs() {
+        // Convert PDFCard objects into dictionaries or simple arrays that can be stored in UserDefaults
+        let pdfData = self.downloadedPDFs.map { pdfCard in
+            return ["url": pdfCard.url, "timestamp": pdfCard.timestamp]
+        }
+        UserDefaults.standard.set(pdfData, forKey: "downloadedPDFs")
+    }
+    
+    func loadPDFs() {
+        if let savedPDFs = UserDefaults.standard.array(forKey: "downloadedPDFs") as? [[String: Any]] {
+            self.downloadedPDFs = savedPDFs.compactMap { pdfDict in
+                // Check if the required keys are present and are of the correct type
+                guard let urlString = pdfDict["url"] as? String,
+                      let timestampString = pdfDict["timestamp"] as? String else {
+                    return nil // Return nil if the required data is not present
+                }
+                
+                // Convert the timestamp string back into a Date object
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                guard let timestamp = dateFormatter.date(from: timestampString) else {
+                    return nil  // Return nil if the date string cannot be parsed
+                }
+                
+                // Create and return the PDFCard object
+                let pdfCard = PDFCard(url: urlString, timestamp: timestamp)
+                return pdfCard
+            }
+        }
     }
 
 
