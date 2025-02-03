@@ -3,6 +3,7 @@ import UserNotifications
 
 extension Notification.Name {
     static let didFinishDownloading = Notification.Name("didFinishDownloading")
+    static let didTapNotification = Notification.Name("didTapNotification")
 }
 
 
@@ -54,14 +55,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     // Called when a notification is delivered to a foreground app
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         print("Notification received in foreground: \(notification.request.content.body)")
+        
+        // Extract the URL from the notification's userInfo and call the appropriate method in your view controller
+        if let url = notification.request.content.userInfo["presigned_url"] as? String {
+            // Post the notification to the ViewController
+            NotificationCenter.default.post(name: .didFinishDownloading, object: nil, userInfo: ["url": url])
+        }
+
         completionHandler([.alert, .sound])
     }
     
+    // Called when app receives remote notifications (push notifications from a server)
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        print("received notification in background")
-        if let downloadURL = userInfo["presigned_url"] as? String {
+        if let url = userInfo["presigned_url"] as? String {
+            print("Remote notification received for URL: \(url)")
+            
             // Post a notification to update the UI
-            NotificationCenter.default.post(name: .didFinishDownloading, object: nil, userInfo: ["url": downloadURL])
+            NotificationCenter.default.post(name: .didFinishDownloading, object: nil, userInfo: ["url": url])
         }
         completionHandler(.newData)
     }
@@ -69,16 +79,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
     // Called when the user taps on the notification
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        print ("inside userNotificationCenter")
-        // Check if the user tapped the "Open PDF" button
-        
         // Example of saving the URL in UserDefaults (or AppState)
-            if let userInfo = response.notification.request.content.userInfo as? [String: Any],
-               let url = userInfo["presigned_url"] as? String {
-                UserDefaults.standard.set(url, forKey: "downloadURL")
-                
-                // Post a notification to update the UI
-                NotificationCenter.default.post(name: .didFinishDownloading, object: nil, userInfo: ["url": url])
+            if let url = response.notification.request.content.userInfo["presigned_url"] as? String {
+                print("Notification tapped for URL: \(url)")
+                NotificationCenter.default.post(name: .didTapNotification, object: nil, userInfo: ["url": url])
             }
         
         completionHandler()

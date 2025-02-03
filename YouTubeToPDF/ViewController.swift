@@ -1,5 +1,8 @@
 import UIKit
 import PDFKit
+import WebKit
+
+private var cardKey: UInt8 = 0
 
 class ViewController: UIViewController {
     
@@ -9,12 +12,17 @@ class ViewController: UIViewController {
     // IBOutlet for the Explore scroll view
     @IBOutlet weak var exploreScrollView: UIScrollView!
     
+    // Declare a WKWebView to display PDFs
+    var pdfWebView: WKWebView!
+    var backButton: UIButton!
+
     // Define variables for the bottom tab bar and buttons
     var bottomTabBar: UIView!
     var exploreButton: UIButton!
     var generateButton: UIButton!
     
     var currentTab = "Explore" // Default active tab
+    
     
     // Store all downloaded PDFs as cards
     var downloadedPDFs: [PDFCard] = []
@@ -38,7 +46,22 @@ class ViewController: UIViewController {
         
         // Observe the custom notification
         NotificationCenter.default.addObserver(self, selector: #selector(handleDownloadFinished(_:)), name: .didFinishDownloading, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNotificationTap(_:)), name: .didTapNotification, object: nil)
+
     }
+    
+    
+    @objc func refreshUIOnForeground() {
+        // Refresh Explore tab and ensure the PDFView is shown if necessary
+        print("App is coming to the foreground, updating UI.")
+        updateExploreTabUI()
+
+        // Optional: If you need to open a PDF right away, check if there is any URL to open
+        if let lastDownloadedURL = downloadedPDFs.last?.url {
+            openPDF(lastDownloadedURL)
+        }
+    }
+
     
     // MARK: - UI Setup
     func setupUI() {
@@ -218,46 +241,79 @@ class ViewController: UIViewController {
        // Retrieve the URL from the notification's userInfo
        if let userInfo = notification.userInfo, let url = userInfo["url"] as? String {
            // Update the UI or show the download popup
-//           showDownloadPopup(url: url)
-           
-           self.submitButton.isEnabled = true
-           
-           // Add the downloaded PDF to the list and update UI
-           addDownloadedPDF(url: url)
+           // showDownloadPopup(url: url)
+           print("inside handleDownloadFinished")
+           // Check if the PDF is already in the list to prevent duplicates
+           if !downloadedPDFs.contains(where: { $0.url == url }) {
+               print("url not in downloadedPDFs, adding it")
+               // Add the downloaded PDF to the list and update UI
+               addDownloadedPDF(url: url)
+           } else {
+               print("PDF already downloaded, skipping addition.")
+           }
        }
     }
     
+    // Open the PDF when the notification is tapped
+    @objc func handleNotificationTap(_ notification: Notification) {
+        if let userInfo = notification.userInfo, let url = userInfo["url"] as? String {
+            // Check if the PDF is already in the list
+            if let pdfCard = downloadedPDFs.first(where: { $0.url == url }) {
+                // Open the PDF directly (since it's already in the list)
+                openPDF(pdfCard.url)  // Make sure the URL is passed to the openPDF method
+            } else {
+                print("PDF not found in list.")
+            }
+        }
+    }
+    
     func addDownloadedPDF(url: String) {
+        print("inside addDownloadedPDF")
         // Create a new PDF card with the current timestamp
         let newPDFCard = PDFCard(url: url, timestamp: Date())
         
         // Append it to the list of downloaded PDFs
         downloadedPDFs.append(newPDFCard)
+        print("appended pdf card to list, next step is to update UI")
         
         // Update the UI to display the new PDF card in the Explore tab
         updateExploreTabUI()
     }
     
     func updateExploreTabUI() {
-        // Remove all existing subviews from the Explore scroll view
-        for subview in exploreScrollView.subviews {
-            subview.removeFromSuperview()
-        }
-
-        var lastYPosition: CGFloat = 20
-        
-        // Loop through all the downloaded PDFs and create "cards" for each
-        for (index, pdf) in downloadedPDFs.enumerated() {
-            // Create the card view for each PDF
-            let cardView = createCardView(for: pdf)
-            cardView.frame = CGRect(x: 20, y: lastYPosition, width: self.view.frame.width - 40, height: 100)
-            exploreScrollView.addSubview(cardView)
+        print("inside updateExploreTabUI")
+        DispatchQueue.main.async {
+            print("Updating Explore Tab UI...")  // Debug print
             
-            lastYPosition = cardView.frame.maxY + 20
-        }
+            // Remove all existing subviews from the Explore scroll view
+            for subview in self.exploreScrollView.subviews {
+                print("Removing subview: \(subview)")  // Debug print
+                subview.removeFromSuperview()
+            }
 
-        // Set the content size of the scroll view so that it is scrollable
-        exploreScrollView.contentSize = CGSize(width: self.view.frame.width, height: lastYPosition)
+            var lastYPosition: CGFloat = 20
+            
+            // Loop through all the downloaded PDFs and create "cards" for each
+            for (index, pdf) in self.downloadedPDFs.enumerated() {
+                // Create the card view for each PDF
+                print("Creating card for PDF: \(pdf.url)")  // Debug print
+                let cardView = self.createCardView(for: pdf)
+                cardView.frame = CGRect(x: 20, y: lastYPosition, width: self.view.frame.width - 40, height: 100)
+                self.exploreScrollView.addSubview(cardView)
+                
+                lastYPosition = cardView.frame.maxY + 20
+            }
+
+            // Set the content size of the scroll view so that it is scrollable
+            self.exploreScrollView.contentSize = CGSize(width: self.view.frame.width, height: lastYPosition)
+            print("Scroll view content size updated: \(self.exploreScrollView.contentSize)")  // Debug print
+            
+            // Ensure that the layout is updated (in case there are layout issues)
+            self.view.layoutIfNeeded()
+            
+            // Re-enable the submit button
+            self.submitButton.isEnabled = true
+        }
     }
 
     // Create a custom "card" for each downloaded PDF
@@ -269,14 +325,14 @@ class ViewController: UIViewController {
         cardView.layer.shadowOpacity = 0.1
         cardView.layer.shadowOffset = CGSize(width: 0, height: 2)
         cardView.layer.shadowRadius = 4
-        
+
         let titleLabel = UILabel()
         titleLabel.text = "Generated PDF"
         titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
         titleLabel.textColor = .black
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         cardView.addSubview(titleLabel)
-        
+
         let timestampLabel = UILabel()
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -285,21 +341,87 @@ class ViewController: UIViewController {
         timestampLabel.textColor = .gray
         timestampLabel.translatesAutoresizingMaskIntoConstraints = false
         cardView.addSubview(timestampLabel)
-        
+
         // Set up constraints for the labels
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 10),
             titleLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 10),
             titleLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -10),
-            
+
             timestampLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5),
             timestampLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 10),
             timestampLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -10),
             timestampLabel.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -10)
         ])
+
+        // Add tap gesture recognizer to the card
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cardTapped(_:)))
+        cardView.addGestureRecognizer(tapGesture)
+        cardView.isUserInteractionEnabled = true
         
+        // Store the URL for this card in the gesture's associated object
+        print("Associating PDF card: \(pdfCard.url)")
+        objc_setAssociatedObject(cardView, &cardKey, pdfCard, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+
         return cardView
     }
+    
+    @objc func cardTapped(_ sender: UITapGestureRecognizer) {
+        guard let cardView = sender.view else { return }
+        
+        // Attempt to retrieve the associated PDFCard
+        if let pdfCard = objc_getAssociatedObject(cardView, &cardKey) as? PDFCard {
+            print("Card tapped! PDF URL: \(pdfCard.url)")
+            openPDF(pdfCard.url)
+        } else {
+            // Print the associated object for debugging
+            print("Failed to retrieve associated PDFCard.")
+            if let associatedObject = objc_getAssociatedObject(cardView, &cardKey) {
+                print("Associated object exists, but it is not of type PDFCard: \(associatedObject)")
+            }
+        }
+    }
+
+    
+    func addBackButton() {
+        // Check if the back button already exists, if it does, return
+        if backButton != nil { return }
+        
+        // Create the back button
+        backButton = UIButton(type: .system)
+        backButton.setTitle("Back", for: .normal)
+        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+        
+        // Set up the back button appearance
+        backButton.translatesAutoresizingMaskIntoConstraints = false
+        backButton.layer.cornerRadius = 10
+        backButton.layer.borderWidth = 1
+        backButton.layer.borderColor = UIColor.systemBlue.cgColor
+        backButton.setTitleColor(.systemBlue, for: .normal)
+        
+        view.addSubview(backButton)
+        
+        // Add constraints for the back button
+        NSLayoutConstraint.activate([
+            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            backButton.widthAnchor.constraint(equalToConstant: 80),
+            backButton.heightAnchor.constraint(equalToConstant: 40)
+        ])
+    }
+
+    @objc func backButtonTapped() {
+        // Hide the PDF view
+        pdfView.isHidden = true
+        
+        // Remove the back button
+        backButton.removeFromSuperview()
+        backButton = nil
+        
+        // Show the Explore tab again with the cards
+        updateTabSelection(selectedTab: "Explore")
+    }
+
 
     
     override func viewDidAppear(_ animated: Bool) {
@@ -318,14 +440,18 @@ class ViewController: UIViewController {
     
     // This method is called when the app is about to enter the foreground
     @objc func appWillEnterForeground() {
-        // Trigger the UI update or perform actions that should happen when the app returns to the foreground
+        // Re-setup or update the UI when the app is coming into the foreground
+        // This ensures the view updates appropriately when the app comes from the background.
         print("App entered foreground - UI should be updated")
+        
         // Update your UI or perform any necessary actions here
+        updateExploreTabUI()
     }
 
     // Unregister when the view controller goes away
     deinit {
         NotificationCenter.default.removeObserver(self, name: UIApplication.willEnterForegroundNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .didTapNotification, object: nil)
     }
 
     func showDownloadPopup(url: String) {
@@ -370,6 +496,10 @@ class ViewController: UIViewController {
                 DispatchQueue.main.async {
                     self.pdfView.document = document
                     self.pdfView.isHidden = false // Show the PDFView when the PDF is loaded
+                    print("PDF loaded successfully")
+                    
+                    // Create a back button
+                    self.addBackButton()
                 }
             } else {
                 // Handle error if the PDF couldn't be loaded
@@ -399,6 +529,7 @@ class ViewController: UIViewController {
         // Disable the button to prevent multiple submissions
         submitButton.isEnabled = false
         
+        sleep(2)
     
         // Trigger the API call to start the process
 //        triggerStepFunction(youtubeURL: youtubeUrl, deviceToken: deviceToken)
@@ -417,7 +548,7 @@ class ViewController: UIViewController {
         // Set the trigger to fire immediately (1 second)
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
 
-        let request = UNNotificationRequest(identifier: "downloadComplete", content: content, trigger: trigger)
+        let request = UNNotificationRequest(identifier: "didFinishDownloading", content: content, trigger: trigger)
 
         UNUserNotificationCenter.current().add(request) { (error) in
             if let error = error {
