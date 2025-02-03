@@ -37,15 +37,28 @@ class ViewController: UIViewController {
     let apiGatewayUrl = "https://bnwc9iszkk.execute-api.us-east-2.amazonaws.com/prod/convert"
     let pollingUrl = "https://bnwc9iszkk.execute-api.us-east-2.amazonaws.com/prod/status"
     
-                                                       
+    override func viewWillAppear(_ animated: Bool) {
+        print("viewWillAppear called")  // Check if this is being triggered
+
+        super.viewWillAppear(animated)
+        
+        // Load saved PDFs from UserDefaults
+        loadPDFs()
+    }
+                                              
     override func viewDidLoad() {
+        print("viewDidLoad called")
+
         super.viewDidLoad()
+        
+        
+        // Load saved PDFs from persistent storage
+        self.loadPDFs()
+        
+        print("loadPDFs called")
         
         // Set up the UI and headers programmatically
         setupTabHeaders()
-        
-        // Load saved PDFs from persistent storage
-        loadPDFs()
         
         // Set up the initial UI
         setupUI()
@@ -326,6 +339,8 @@ class ViewController: UIViewController {
         downloadedPDFs.append(newPDFCard)
         print("appended pdf card to list, next step is to update UI")
         
+        savePDFs()  // Save the updated list to UserDefaults
+        
         // Update the UI to display the new PDF card in the Explore tab
         updateExploreTabUI()
     }
@@ -535,31 +550,43 @@ class ViewController: UIViewController {
         let pdfData = self.downloadedPDFs.map { pdfCard in
             return ["url": pdfCard.url, "timestamp": pdfCard.timestamp]
         }
+        
+        print("Saving PDFs to UserDefaults: \(pdfData)")
+        
         UserDefaults.standard.set(pdfData, forKey: "downloadedPDFs")
+        
+        print("Saved PDFs to UserDefaults: \(pdfData)") // Confirm the data being saved
     }
     
+    // read from UserDefaults and into self.downloadedPDFs
     func loadPDFs() {
         if let savedPDFs = UserDefaults.standard.array(forKey: "downloadedPDFs") as? [[String: Any]] {
+            print("Loaded PDFs from UserDefaults: \(savedPDFs)")  // Debug print to check if PDFs are loaded correctly
             self.downloadedPDFs = savedPDFs.compactMap { pdfDict in
-                // Check if the required keys are present and are of the correct type
+                // Make sure the dictionary has both keys and their correct types
                 guard let urlString = pdfDict["url"] as? String,
                       let timestampString = pdfDict["timestamp"] as? String else {
-                    return nil // Return nil if the required data is not present
+                    return nil  // Skip if the data is malformed
                 }
-                
-                // Convert the timestamp string back into a Date object
+
+                // Convert the timestamp string back to a Date object
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
                 guard let timestamp = dateFormatter.date(from: timestampString) else {
-                    return nil  // Return nil if the date string cannot be parsed
+                    return nil  // Skip if the date string can't be parsed
                 }
-                
-                // Create and return the PDFCard object
-                let pdfCard = PDFCard(url: urlString, timestamp: timestamp)
-                return pdfCard
+
+                // Return the PDFCard object
+                return PDFCard(url: urlString, timestamp: timestamp)
             }
+            
+            print("Loaded PDF cards: \(downloadedPDFs)")  // Debug print to show the loaded cards
+            updateExploreTabUI()  // Make sure this updates the UI after loading the PDFs
+        } else {
+            print("No PDFs found in UserDefaults")  // Debug if nothing is saved in UserDefaults
         }
     }
+
 
 
 
@@ -622,6 +649,7 @@ class ViewController: UIViewController {
 
     
     override func viewDidAppear(_ animated: Bool) {
+        print("viewDidAppear called")
         super.viewDidAppear(animated)
         
         // Show the popup if the flag is set
