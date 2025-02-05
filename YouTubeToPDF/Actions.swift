@@ -70,6 +70,10 @@ extension ViewController {
         updateTabSelection(selectedTab: "Generate")
     }
     
+    @objc private func recordTapped() {
+        updateTabSelection(selectedTab: "Record")
+    }
+    
     // Update the UI when a tab is selected
     private func updateTabSelection(selectedTab: String) {
         currentTab = selectedTab
@@ -102,6 +106,14 @@ extension ViewController {
             // Highlight the Generate button and dim the Explore button
             generateButton.backgroundColor = UIColor.systemGreen
             exploreButton.backgroundColor = UIColor.darkGray
+        case "Record":
+            let recordVC = RecordViewController()
+            recordVC.modalPresentationStyle = .fullScreen
+            present(recordVC, animated: true, completion: nil)
+
+            recordButton.backgroundColor = UIColor.systemGreen
+            exploreButton.backgroundColor = UIColor.darkGray
+            generateButton.backgroundColor = UIColor.darkGray
         default:
             break
         }
@@ -161,13 +173,15 @@ extension ViewController {
         // Create the buttons for each tab
         exploreButton = createTabButton(title: "Explore", action: #selector(exploreTapped))
         generateButton = createTabButton(title: "Generate", action: #selector(generateTapped))
+        recordButton = createTabButton(title: "Record", action: #selector(recordTapped)) // New Record tab
 
         // Add buttons to the bottom tab bar
         bottomTabBar.addSubview(exploreButton)
         bottomTabBar.addSubview(generateButton)
+        bottomTabBar.addSubview(recordButton)
 
         // Set up button constraints inside the bottom tab bar
-        let buttons = [exploreButton, generateButton]
+        let buttons = [exploreButton, generateButton, recordButton]
         let buttonWidth = (view.frame.width - 40) / CGFloat(buttons.count) // Adjust width based on screen size
 
         for (index, button) in buttons.enumerated() {

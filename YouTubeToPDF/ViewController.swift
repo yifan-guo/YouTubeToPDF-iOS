@@ -28,6 +28,7 @@ class ViewController: UIViewController,CommentsViewControllerDelegate {
     var bottomTabBar: UIView!
     var exploreButton: UIButton!
     var generateButton: UIButton!
+    var recordButton: UIButton!
     
     var exploreHeaderLabel: UILabel!
     var generateHeaderLabel: UILabel!
@@ -298,7 +299,7 @@ class ViewController: UIViewController,CommentsViewControllerDelegate {
         }
         
         guard let deviceToken = (UIApplication.shared.delegate as? AppDelegate)?.deviceToken else {
-            print("Device token not aavilable")
+            print("Device token not available")
             return
         }
         
