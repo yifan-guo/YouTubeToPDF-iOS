@@ -11,4 +11,5 @@ import Foundation
 struct PDFCard {
     let url: String
     let timestamp: Date
+    var comments: [String]
 }

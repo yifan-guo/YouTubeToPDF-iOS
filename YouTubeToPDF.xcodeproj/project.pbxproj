@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		A41B862D2D5019D900E37298 /* PDFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41B862C2D5019D900E37298 /* PDFModel.swift */; };
+		A41B86352D5318C000E37298 /* Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41B86342D5318C000E37298 /* Actions.swift */; };
+		A41B86372D531E4F00E37298 /* CommentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41B86362D531E4F00E37298 /* CommentsViewController.swift */; };
 		A4D4F2442D44AF0900C5FCBA /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D4F2432D44AF0900C5FCBA /* AppState.swift */; };
 		A4E7C9772D2C6808007DA103 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E7C9762D2C6808007DA103 /* AppDelegate.swift */; };
 		A4E7C9792D2C6808007DA103 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E7C9782D2C6808007DA103 /* SceneDelegate.swift */; };
@@ -39,6 +41,8 @@
 
 /* Begin PBXFileReference section */
 		A41B862C2D5019D900E37298 /* PDFModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFModel.swift; sourceTree = "<group>"; };
+		A41B86342D5318C000E37298 /* Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Actions.swift; sourceTree = "<group>"; };
+		A41B86362D531E4F00E37298 /* CommentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewController.swift; sourceTree = "<group>"; };
 		A4D4F2432D44AF0900C5FCBA /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		A4D4F2452D459A4C00C5FCBA /* YouTubeToPDF.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = YouTubeToPDF.entitlements; sourceTree = "<group>"; };
 		A4D4F2462D459BBD00C5FCBA /* YouTubeToPDF.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = YouTubeToPDF.entitlements; sourceTree = "<group>"; };
@@ -116,6 +120,8 @@
 				A4E7C9842D2C680A007DA103 /* Info.plist */,
 				A4D4F2432D44AF0900C5FCBA /* AppState.swift */,
 				A41B862C2D5019D900E37298 /* PDFModel.swift */,
+				A41B86342D5318C000E37298 /* Actions.swift */,
+				A41B86362D531E4F00E37298 /* CommentsViewController.swift */,
 			);
 			path = YouTubeToPDF;
 			sourceTree = "<group>";
@@ -270,7 +276,9 @@
 			files = (
 				A4E7C97B2D2C6808007DA103 /* ViewController.swift in Sources */,
 				A4E7C9772D2C6808007DA103 /* AppDelegate.swift in Sources */,
+				A41B86372D531E4F00E37298 /* CommentsViewController.swift in Sources */,
 				A4E7C9792D2C6808007DA103 /* SceneDelegate.swift in Sources */,
+				A41B86352D5318C000E37298 /* Actions.swift in Sources */,
 				A4D4F2442D44AF0900C5FCBA /* AppState.swift in Sources */,
 				A41B862D2D5019D900E37298 /* PDFModel.swift in Sources */,
 			);
