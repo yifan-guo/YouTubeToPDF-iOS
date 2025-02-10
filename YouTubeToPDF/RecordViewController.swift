@@ -4,6 +4,7 @@ import AVFoundation
 class RecordViewController: UIViewController, AVAudioRecorderDelegate {
     
     var recordButton: UIButton!
+    var deleteButton: UIButton!
     var submitButton: UIButton!
     var waveformView: WaveformView!
     var audioRecorder: AVAudioRecorder?
@@ -46,6 +47,13 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
         submitButton.alpha = 0.5 // Visually indicate disabled state
         submitButton.addTarget(self, action: #selector(submitAudio), for: .touchUpInside)
         view.addSubview(submitButton)
+        
+        deleteButton = UIButton(type: .system)
+        deleteButton.frame = CGRect(x: (view.frame.width - 150) / 2, y: 510, width: 150, height: 50)
+        deleteButton.setTitle("Delete Recording", for: .normal)
+        deleteButton.isHidden = true  // Initially hidden
+        deleteButton.addTarget(self, action: #selector(deleteRecording), for: .touchUpInside)
+        view.addSubview(deleteButton)
     }
     
     func requestAudioPermission() {
@@ -99,9 +107,28 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
         audioRecorder?.stop()
         audioRecorder = nil
         
-        recordButton.backgroundColor = .red  // Change color back
-        submitButton.isEnabled = true  // Enable submit after recording stops
+        recordButton.backgroundColor = .lightGray  // Indicate disabled state
+        recordButton.isEnabled = false  // Disable until submit or delete
+        
+        submitButton.isEnabled = true
         submitButton.alpha = 1.0
+        
+        deleteButton.isHidden = false  // Show delete option
+    }
+
+    @objc func deleteRecording() {
+        if let audioUrl = audioFileUrl {
+            try? FileManager.default.removeItem(at: audioUrl)
+        }
+        resetUIAfterDelete()
+    }
+    
+    func resetUIAfterDelete() {
+        recordButton.backgroundColor = .red
+        recordButton.isEnabled = true
+        submitButton.isEnabled = false
+        submitButton.alpha = 0.5
+        deleteButton.isHidden = true  // Hide delete button again
     }
     
     @objc func submitAudio() {
