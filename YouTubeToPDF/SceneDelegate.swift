@@ -16,7 +16,31 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        guard let _ = (scene as? UIWindowScene) else { return }
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+                
+        window = UIWindow(windowScene: windowScene)
+        
+        // Initialize the root view controller, which is the TabBarController
+        let exploreVC = ExploreViewController() // Replace with your actual view controller
+        let generateVC = GenerateViewController() // Replace with your actual view controller
+        let recordVC = RecordViewController() // Your RecordViewController
+        
+        exploreVC.tabBarItem = UITabBarItem(title: "Explore", image: UIImage(systemName: "house.fill"), tag: 0)
+        generateVC.tabBarItem = UITabBarItem(title: "Generate", image: UIImage(systemName: "doc.text"), tag: 1)
+        recordVC.tabBarItem = UITabBarItem(title: "Record", image: UIImage(systemName: "mic.fill"), tag: 2)
+        
+        // Create a Tab Bar Controller
+        let tabBarController = UITabBarController()
+        tabBarController.viewControllers = [exploreVC, generateVC, recordVC]
+        
+        // Set the root view controller to the tab bar controller
+        window?.rootViewController = tabBarController
+        window?.makeKeyAndVisible()
+        
+        // Handle launching from notification
+        if let notificationResponse = connectionOptions.notificationResponse {
+            NotificationCenter.default.post(name: .didTapNotification, object: nil)
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

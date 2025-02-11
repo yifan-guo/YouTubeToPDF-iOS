@@ -8,14 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		A41B862D2D5019D900E37298 /* PDFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41B862C2D5019D900E37298 /* PDFModel.swift */; };
-		A41B86352D5318C000E37298 /* Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41B86342D5318C000E37298 /* Actions.swift */; };
 		A41B86372D531E4F00E37298 /* CommentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41B86362D531E4F00E37298 /* CommentsViewController.swift */; };
 		A41B863B2D53363500E37298 /* RecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41B863A2D53363500E37298 /* RecordViewController.swift */; };
 		A41B863D2D5338AC00E37298 /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41B863C2D5338AC00E37298 /* WaveformView.swift */; };
+		A41B86432D5B2E9900E37298 /* ExploreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41B86422D5B2E9900E37298 /* ExploreViewController.swift */; };
+		A41B86452D5B2ED100E37298 /* GenerateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41B86442D5B2ED100E37298 /* GenerateViewController.swift */; };
 		A4D4F2442D44AF0900C5FCBA /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D4F2432D44AF0900C5FCBA /* AppState.swift */; };
 		A4E7C9772D2C6808007DA103 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E7C9762D2C6808007DA103 /* AppDelegate.swift */; };
 		A4E7C9792D2C6808007DA103 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E7C9782D2C6808007DA103 /* SceneDelegate.swift */; };
-		A4E7C97B2D2C6808007DA103 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E7C97A2D2C6808007DA103 /* ViewController.swift */; };
 		A4E7C97E2D2C6808007DA103 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A4E7C97C2D2C6808007DA103 /* Main.storyboard */; };
 		A4E7C9802D2C680A007DA103 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A4E7C97F2D2C680A007DA103 /* Assets.xcassets */; };
 		A4E7C9832D2C680A007DA103 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A4E7C9812D2C680A007DA103 /* LaunchScreen.storyboard */; };
@@ -43,17 +43,17 @@
 
 /* Begin PBXFileReference section */
 		A41B862C2D5019D900E37298 /* PDFModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFModel.swift; sourceTree = "<group>"; };
-		A41B86342D5318C000E37298 /* Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Actions.swift; sourceTree = "<group>"; };
 		A41B86362D531E4F00E37298 /* CommentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsViewController.swift; sourceTree = "<group>"; };
 		A41B863A2D53363500E37298 /* RecordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordViewController.swift; sourceTree = "<group>"; };
 		A41B863C2D5338AC00E37298 /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
+		A41B86422D5B2E9900E37298 /* ExploreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreViewController.swift; sourceTree = "<group>"; };
+		A41B86442D5B2ED100E37298 /* GenerateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateViewController.swift; sourceTree = "<group>"; };
 		A4D4F2432D44AF0900C5FCBA /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		A4D4F2452D459A4C00C5FCBA /* YouTubeToPDF.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = YouTubeToPDF.entitlements; sourceTree = "<group>"; };
 		A4D4F2462D459BBD00C5FCBA /* YouTubeToPDF.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = YouTubeToPDF.entitlements; sourceTree = "<group>"; };
 		A4E7C9732D2C6808007DA103 /* YouTubeToPDF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YouTubeToPDF.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4E7C9762D2C6808007DA103 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A4E7C9782D2C6808007DA103 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		A4E7C97A2D2C6808007DA103 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		A4E7C97D2D2C6808007DA103 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A4E7C97F2D2C680A007DA103 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A4E7C9822D2C680A007DA103 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -117,17 +117,17 @@
 				A4D4F2462D459BBD00C5FCBA /* YouTubeToPDF.entitlements */,
 				A4E7C9762D2C6808007DA103 /* AppDelegate.swift */,
 				A4E7C9782D2C6808007DA103 /* SceneDelegate.swift */,
-				A4E7C97A2D2C6808007DA103 /* ViewController.swift */,
 				A4E7C97C2D2C6808007DA103 /* Main.storyboard */,
 				A4E7C97F2D2C680A007DA103 /* Assets.xcassets */,
 				A4E7C9812D2C680A007DA103 /* LaunchScreen.storyboard */,
 				A4E7C9842D2C680A007DA103 /* Info.plist */,
 				A4D4F2432D44AF0900C5FCBA /* AppState.swift */,
 				A41B862C2D5019D900E37298 /* PDFModel.swift */,
-				A41B86342D5318C000E37298 /* Actions.swift */,
 				A41B86362D531E4F00E37298 /* CommentsViewController.swift */,
 				A41B863A2D53363500E37298 /* RecordViewController.swift */,
 				A41B863C2D5338AC00E37298 /* WaveformView.swift */,
+				A41B86422D5B2E9900E37298 /* ExploreViewController.swift */,
+				A41B86442D5B2ED100E37298 /* GenerateViewController.swift */,
 			);
 			path = YouTubeToPDF;
 			sourceTree = "<group>";
@@ -280,13 +280,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4E7C97B2D2C6808007DA103 /* ViewController.swift in Sources */,
 				A4E7C9772D2C6808007DA103 /* AppDelegate.swift in Sources */,
+				A41B86432D5B2E9900E37298 /* ExploreViewController.swift in Sources */,
 				A41B86372D531E4F00E37298 /* CommentsViewController.swift in Sources */,
 				A41B863B2D53363500E37298 /* RecordViewController.swift in Sources */,
 				A4E7C9792D2C6808007DA103 /* SceneDelegate.swift in Sources */,
-				A41B86352D5318C000E37298 /* Actions.swift in Sources */,
 				A4D4F2442D44AF0900C5FCBA /* AppState.swift in Sources */,
+				A41B86452D5B2ED100E37298 /* GenerateViewController.swift in Sources */,
 				A41B863D2D5338AC00E37298 /* WaveformView.swift in Sources */,
 				A41B862D2D5019D900E37298 /* PDFModel.swift in Sources */,
 			);

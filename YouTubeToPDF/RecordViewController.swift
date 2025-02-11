@@ -20,9 +20,15 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
     
     func setupUI() {
         view.backgroundColor = .white
-        
+        self.title = "Record"
+
+        let label = UILabel()
+        label.text = "Record Tab"
+        self.view.addSubview(label)
+
         // Back Button (only needed if modal)
         if navigationController == nil {
+            print("❌ navigationController is nil!")
             navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Done", style: .plain, target: self, action: #selector(dismissView))
         }
 
@@ -54,6 +60,11 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
         deleteButton.isHidden = true  // Initially hidden
         deleteButton.addTarget(self, action: #selector(deleteRecording), for: .touchUpInside)
         view.addSubview(deleteButton)
+        
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
+        ])
     }
     
     func requestAudioPermission() {
