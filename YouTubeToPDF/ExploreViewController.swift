@@ -62,7 +62,6 @@ class ExploreViewController: UIViewController, CommentsViewControllerDelegate {
         
         // Observe the custom notification
         NotificationCenter.default.addObserver(self, selector: #selector(handleDownloadFinished(_:)), name: .didFinishDownloading, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleNotificationTap(_:)), name: .didTapNotification, object: nil)
     }
     
     // Unregister when the view controller goes away
@@ -128,7 +127,6 @@ class ExploreViewController: UIViewController, CommentsViewControllerDelegate {
         if let userInfo = notification.userInfo, let url = userInfo["url"] as? String {
             // Update the UI or show the download popup
             // showDownloadPopup(url: url)
-            print("inside handleDownloadFinished")
             // Check if the PDF is already in the list to prevent duplicates
             if !downloadedPDFs.contains(where: { $0.url == url }) {
                 print("url not in downloadedPDFs, adding it")
@@ -140,26 +138,12 @@ class ExploreViewController: UIViewController, CommentsViewControllerDelegate {
         }
      }
      
-     // Open the PDF when the notification is tapped
-     @objc func handleNotificationTap(_ notification: Notification) {
-         if let userInfo = notification.userInfo, let url = userInfo["url"] as? String {
-             // Check if the PDF is already in the list
-             if let pdfCard = downloadedPDFs.first(where: { $0.url == url }) {
-                 // Open the PDF directly (since it's already in the list)
-                 openPDF(pdfCard.url)  // Make sure the URL is passed to the openPDF method
-             } else {
-                 print("PDF not found in list.")
-             }
-         }
-     }
-    
     func addDownloadedPDF(url: String) {
         // Create a new PDF card with the current timestamp
         let newPDFCard = PDFCard(url: url, timestamp: Date(), comments: [])
         
         // Append it to the list of downloaded PDFs
         downloadedPDFs.append(newPDFCard)
-        print("appended pdf card to list, next step is to update UI")
         
         savePDFs()  // Save the updated list to UserDefaults
         
@@ -253,7 +237,6 @@ class ExploreViewController: UIViewController, CommentsViewControllerDelegate {
     }
     
     func updateExploreTabUI() {
-        print("inside updateExploreTabUI")
         DispatchQueue.main.async {
             print("Updating Explore Tab UI...")  // Debug print
             
@@ -267,7 +250,7 @@ class ExploreViewController: UIViewController, CommentsViewControllerDelegate {
             // Loop through all the downloaded PDFs and create "cards" for each
             for (index, pdf) in self.downloadedPDFs.enumerated() {
                 // Create the card view for each PDF
-                print("Creating card for PDF: \(pdf.url)")  // Debug print
+                print("Creating card for PDF")  // Debug print
                 let cardView = self.createCardView(for: pdf)
                 cardView.frame = CGRect(x: 20, y: lastYPosition, width: self.view.frame.width - 40, height: 100)
                 self.exploreScrollView.addSubview(cardView)
@@ -405,7 +388,7 @@ class ExploreViewController: UIViewController, CommentsViewControllerDelegate {
         
         // Attempt to retrieve the associated PDFCard
         if let pdfCard = objc_getAssociatedObject(cardView, &cardKey) as? PDFCard {
-            print("Card tapped! PDF URL: \(pdfCard.url)")
+            print("Card tapped!")
             openPDF(pdfCard.url)
         } else {
             // Print the associated object for debugging

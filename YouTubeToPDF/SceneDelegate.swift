@@ -10,6 +10,7 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    var tabBarController: UITabBarController?
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -29,20 +30,64 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         generateVC.tabBarItem = UITabBarItem(title: "Generate", image: UIImage(systemName: "doc.text"), tag: 1)
         recordVC.tabBarItem = UITabBarItem(title: "Record", image: UIImage(systemName: "mic.fill"), tag: 2)
         
+        // Embed each of them in a UINavigationController
+        let exploreNavVC = UINavigationController(rootViewController: exploreVC)
+        let generateNavVC = UINavigationController(rootViewController: generateVC)
+        let recordNavVC = UINavigationController(rootViewController: recordVC)
+        
         // Create a Tab Bar Controller
-        let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [exploreVC, generateVC, recordVC]
+        tabBarController = UITabBarController()
+        tabBarController?.viewControllers = [exploreNavVC, generateNavVC, recordNavVC]
+
         
         // Set the root view controller to the tab bar controller
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
         
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNotificationTap(_:)), name: .didTapNotification, object: nil)
+        
         // Handle launching from notification
         if let notificationResponse = connectionOptions.notificationResponse {
-            NotificationCenter.default.post(name: .didTapNotification, object: nil)
+            NotificationCenter.default.post(name: .didTapNotification, object: notificationResponse, userInfo: notificationResponse.notification.request.content.userInfo)
         }
     }
 
+    // Open the PDF when the notification is tapped
+    @objc func handleNotificationTap(_ notification: Notification) {
+        
+        // Prioritize userInfo since it's populated reliably
+        if let userInfo = notification.userInfo,
+          let pdfURLString = userInfo["url"] as? String {
+            
+            guard let tabBarController = tabBarController else {
+                print("No tabBarController found")
+                return
+            }
+
+            // Switch to the Explore tab
+            tabBarController.selectedIndex = 0
+            
+            // Ensure ExploreViewController is visible
+            guard let navController = tabBarController.selectedViewController as? UINavigationController
+            else {
+                print("selected view controller not found")
+                return
+            }
+
+            guard let  exploreVC = navController.topViewController as? ExploreViewController else {
+                print("ExploreViewController is not visible after switching tabs")
+                return
+            }
+            
+            // Open the PDF in ExploreViewController
+            exploreVC.openPDF(pdfURLString)
+            
+        } else {
+            print("No PDF URL found in notification")
+        }
+    }
+   
+    
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.

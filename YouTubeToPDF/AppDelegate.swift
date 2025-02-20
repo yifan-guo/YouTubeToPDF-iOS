@@ -16,6 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     
     // MARK: - App Lifecycle Methods
     
+    // This method is triggered if the app is launched due to a notification while in the foreground.
+    // If the app is completely closed and launched from a notification, this method is called
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
             if granted {
@@ -52,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
 
     
-    // Called when a notification is delivered to a foreground app
+    // This method is triggered when a notification is received while the app is in the foreground
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         print("Notification received in foreground: \(notification.request.content.body)")
         
@@ -65,11 +67,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         completionHandler([.alert, .sound])
     }
     
-    // Called when app receives remote notifications (push notifications from a server)
+    // This method is called when the app receives a remote notification in the background or when the app is closed.
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        print("Notification received in background")
         if let url = userInfo["presigned_url"] as? String {
-            print("Remote notification received for URL: \(url)")
-            
             // Post a notification to update the UI
             NotificationCenter.default.post(name: .didFinishDownloading, object: nil, userInfo: ["url": url])
         }
@@ -77,11 +78,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
 
 
-    // Called when the user taps on the notification
+    // This method is triggered when the user taps on a notification regardless of where app is
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         // Example of saving the URL in UserDefaults (or AppState)
             if let url = response.notification.request.content.userInfo["presigned_url"] as? String {
-                print("Notification tapped for URL: \(url)")
                 NotificationCenter.default.post(name: .didTapNotification, object: nil, userInfo: ["url": url])
             }
         
