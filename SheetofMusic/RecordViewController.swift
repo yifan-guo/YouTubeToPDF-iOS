@@ -131,6 +131,10 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
         if let audioUrl = audioFileUrl {
             try? FileManager.default.removeItem(at: audioUrl)
         }
+        
+        // Reset the waveform view when the recording is deleted
+        waveformView.clearWaveform()
+        
         resetUIAfterDelete()
     }
     
