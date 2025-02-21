@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A4E7C9722D2C6808007DA103"
-               BuildableName = "YouTubeToPDF.app"
-               BlueprintName = "YouTubeToPDF"
-               ReferencedContainer = "container:YouTubeToPDF.xcodeproj">
+               BuildableName = "SheetofMusic.app"
+               BlueprintName = "SheetofMusic"
+               ReferencedContainer = "container:SheetofMusic.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -36,9 +36,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A4E7C9882D2C680A007DA103"
-               BuildableName = "YouTubeToPDFTests.xctest"
-               BlueprintName = "YouTubeToPDFTests"
-               ReferencedContainer = "container:YouTubeToPDF.xcodeproj">
+               BuildableName = "SheetofMusicTests.xctest"
+               BlueprintName = "SheetofMusicTests"
+               ReferencedContainer = "container:SheetofMusic.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -47,9 +47,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A4E7C9922D2C680B007DA103"
-               BuildableName = "YouTubeToPDFUITests.xctest"
-               BlueprintName = "YouTubeToPDFUITests"
-               ReferencedContainer = "container:YouTubeToPDF.xcodeproj">
+               BuildableName = "SheetofMusicUITests.xctest"
+               BlueprintName = "SheetofMusicUITests"
+               ReferencedContainer = "container:SheetofMusic.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A4E7C9722D2C6808007DA103"
-            BuildableName = "YouTubeToPDF.app"
-            BlueprintName = "YouTubeToPDF"
-            ReferencedContainer = "container:YouTubeToPDF.xcodeproj">
+            BuildableName = "SheetofMusic.app"
+            BlueprintName = "SheetofMusic"
+            ReferencedContainer = "container:SheetofMusic.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -89,9 +89,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A4E7C9722D2C6808007DA103"
-            BuildableName = "YouTubeToPDF.app"
-            BlueprintName = "YouTubeToPDF"
-            ReferencedContainer = "container:YouTubeToPDF.xcodeproj">
+            BuildableName = "SheetofMusic.app"
+            BlueprintName = "SheetofMusic"
+            ReferencedContainer = "container:SheetofMusic.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
