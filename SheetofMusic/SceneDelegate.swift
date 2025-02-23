@@ -79,8 +79,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 return
             }
             
-            // Open the PDF in ExploreViewController
-            exploreVC.openPDF(pdfURLString)
+            // Wait a moment to ensure ExploreViewController has loaded before opening the PDF
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                // Open the PDF in ExploreViewController
+                exploreVC.openPDF(pdfURLString)
+            }
             
         } else {
             print("No PDF URL found in notification")
