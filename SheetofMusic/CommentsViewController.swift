@@ -17,7 +17,6 @@ class CommentsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
 
         setupUI()
         loadComments()
@@ -26,13 +25,17 @@ class CommentsViewController: UIViewController {
     }
 
     private func setupUI() {
+        view.backgroundColor = .white
+        
         tableView.dataSource = self
+        tableView.backgroundColor = .white
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(tableView)
 
         commentTextField.placeholder = "Enter a comment"
         commentTextField.borderStyle = .roundedRect
+        commentTextField.backgroundColor = .lightGray
         commentTextField.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(commentTextField)
 
@@ -130,6 +133,8 @@ extension CommentsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = comments[indexPath.row]
+        cell.backgroundColor = .white
+        cell.textLabel?.textColor = .black
         return cell
     }
 }
