@@ -1,10 +1,3 @@
-//
-//  CommentsViewController.swift
-//  YouTubeToPDF
-//
-//  Created by Yifan Guo on 2/4/25.
-//
-
 import UIKit
 
 protocol CommentsViewControllerDelegate: AnyObject {
@@ -20,6 +13,7 @@ class CommentsViewController: UIViewController {
     private let tableView = UITableView()
     private let commentTextField = UITextField()
     private let submitButton = UIButton(type: .system)
+    private var bottomConstraint: NSLayoutConstraint!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,6 +21,8 @@ class CommentsViewController: UIViewController {
 
         setupUI()
         loadComments()
+        setupKeyboardObservers()
+        setupTapGestureToDismissKeyboard()
     }
 
     private func setupUI() {
@@ -45,6 +41,8 @@ class CommentsViewController: UIViewController {
         submitButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(submitButton)
 
+        bottomConstraint = commentTextField.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
+
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -53,16 +51,47 @@ class CommentsViewController: UIViewController {
 
             commentTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             commentTextField.trailingAnchor.constraint(equalTo: submitButton.leadingAnchor, constant: -10),
-            commentTextField.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            bottomConstraint,
 
             submitButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             submitButton.bottomAnchor.constraint(equalTo: commentTextField.bottomAnchor)
         ])
     }
 
+    private func setupKeyboardObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    private func setupTapGestureToDismissKeyboard() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func keyboardWillShow(_ notification: Notification) {
+        if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+            bottomConstraint.constant = -keyboardFrame.height
+            UIView.animate(withDuration: 0.3) {
+                self.view.layoutIfNeeded()
+            }
+        }
+    }
+
+    @objc private func keyboardWillHide(_ notification: Notification) {
+        bottomConstraint.constant = -16
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+
     private func loadComments() {
         guard let pdfCard = pdfCard else { return }
-        let key = "comments_\(pdfCard.url)"  // Unique key for each PDF
+        let key = "comments_\(pdfCard.url)"
         comments = UserDefaults.standard.stringArray(forKey: key) ?? []
         tableView.reloadData()
     }
@@ -72,27 +101,24 @@ class CommentsViewController: UIViewController {
               let newComment = commentTextField.text,
               !newComment.isEmpty else { return }
 
-        // Get current date & time
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         let timestamp = dateFormatter.string(from: Date())
 
-        // Format the comment with timestamp
         let formattedComment = "\(timestamp) - \(newComment)"
 
-        // Update comments list
         comments.append(formattedComment)
         tableView.reloadData()
 
-        // Save to UserDefaults
         let key = "comments_\(pdfCard.url)"
         UserDefaults.standard.set(comments, forKey: key)
 
-        // Notify delegate
         delegate?.didAddComment(formattedComment, for: pdfCard)
-
-        // Clear input field
         commentTextField.text = ""
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 }
 
