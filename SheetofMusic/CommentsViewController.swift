@@ -37,6 +37,7 @@ class CommentsViewController: UIViewController {
         commentTextField.borderStyle = .roundedRect
         commentTextField.backgroundColor = .lightGray
         commentTextField.translatesAutoresizingMaskIntoConstraints = false
+        commentTextField.addTarget(self, action: #selector(submitComment), for: .editingDidEndOnExit)
         view.addSubview(commentTextField)
 
         submitButton.setTitle("Submit", for: .normal)
@@ -100,6 +101,9 @@ class CommentsViewController: UIViewController {
     }
 
     @objc private func submitComment() {
+        // Dismiss the keyboard
+        commentTextField.resignFirstResponder()
+        
         guard let pdfCard = pdfCard,
               let newComment = commentTextField.text,
               !newComment.isEmpty else { return }
