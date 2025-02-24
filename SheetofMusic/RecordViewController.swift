@@ -259,8 +259,11 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
     @objc func submitAudio() {
         guard let audioUrl = audioFileUrl else {
             print("❌ No recorded audio file found")
+            sendErrorNotification(message: "No recorded audio file found. Please record audio before submitting.")
             return
         }
+
+        sendSubmissionStartedNotification()
 
         DispatchQueue.global(qos: .background).async {
             self.uploadAudioFile(audioUrl: audioUrl)
@@ -270,17 +273,20 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
     func uploadAudioFile(audioUrl: URL) {
         guard var urlComponents = URLComponents(string: apiUploadURL) else {
             print("❌ Invalid API URL")
+            sendErrorNotification(message: "Invalid API URL. Please try again later.")
             return
         }
 
         guard let deviceToken = (UIApplication.shared.delegate as? AppDelegate)?.deviceToken else {
             print("❌ Device token not available")
+            sendErrorNotification(message: "Device token not available. Please restart the app and try again.")
             return
         }
 
         urlComponents.queryItems = [URLQueryItem(name: "deviceToken", value: deviceToken)]
         guard let finalUrl = urlComponents.url else {
             print("❌ Failed to construct URL with query parameters")
+            sendErrorNotification(message: "Failed to construct URL. Please try again later.")
             return
         }
 
@@ -305,6 +311,7 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
             body.append(audioData)
         } catch {
             print("❌ Error reading audio file: \(error.localizedDescription)")
+            sendErrorNotification(message: "Error reading audio file. Please try recording again.")
             return
         }
 
@@ -314,6 +321,7 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
         let task = URLSession.shared.uploadTask(with: request, from: body) { data, response, error in
             if let error = error {
                 print("❌ Upload failed: \(error.localizedDescription)")
+                self.sendErrorNotification(message: "Upload failed: \(error.localizedDescription). Please try again.")
                 return
             }
 
@@ -322,11 +330,28 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
                 self.sendSuccessNotification()
             } else {
                 print("⚠️ Upload failed with response: \(response.debugDescription)")
+                self.sendErrorNotification(message: "Upload failed. Please try again later.")
             }
         }
         task.resume()
     }
 
+    func sendSubmissionStartedNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "Submission Started"
+        content.body = "Your audio recording is being submitted..."
+        content.sound = .default
+
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("❌ Failed to send submission started notification: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    // The code uses local notifications, specifically in the sendSuccessNotification() method. This method creates a UNMutableNotificationContent object and schedules it immediately using UNUserNotificationCenter.
+    // The local notification would be scheduled and displayed even if the app is in the background.
     func sendSuccessNotification() {
         let content = UNMutableNotificationContent()
         content.title = "Upload Successful"
@@ -336,12 +361,29 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print("❌ Failed to send notification: \(error.localizedDescription)")
+                print("❌ Failed to send success notification: \(error.localizedDescription)")
             } else {
-                print("✅ Notification sent successfully.")
+                print("✅ Success notification sent successfully.")
             }
         }
     }
+
+    func sendErrorNotification(message: String) {
+        let content = UNMutableNotificationContent()
+        content.title = "Upload Error"
+        content.body = message
+        content.sound = .default
+
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("❌ Failed to send error notification: \(error.localizedDescription)")
+            } else {
+                print("✅ Error notification sent successfully.")
+            }
+        }
+    }
+
 
     func getDocumentsDirectory() -> URL {
         return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
