@@ -33,9 +33,6 @@
 		A4F0C96A2D678B16003BE124 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A4F0C93D2D678B16003BE124 /* LaunchScreen.storyboard */; };
 		A4F0C96C2D678B16003BE124 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A4F0C93F2D678B16003BE124 /* Main.storyboard */; };
 		A4F0C96D2D678B16003BE124 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A4F0C93F2D678B16003BE124 /* Main.storyboard */; };
-		A4F0C96E2D678B16003BE124 /* PDFCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F0C9402D678B16003BE124 /* PDFCardCell.swift */; };
-		A4F0C96F2D678B16003BE124 /* PDFCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F0C9402D678B16003BE124 /* PDFCardCell.swift */; };
-		A4F0C9702D678B16003BE124 /* PDFCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F0C9402D678B16003BE124 /* PDFCardCell.swift */; };
 		A4F0C9712D678B16003BE124 /* PDFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F0C9412D678B16003BE124 /* PDFModel.swift */; };
 		A4F0C9722D678B16003BE124 /* PDFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F0C9412D678B16003BE124 /* PDFModel.swift */; };
 		A4F0C9732D678B16003BE124 /* PDFModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F0C9412D678B16003BE124 /* PDFModel.swift */; };
@@ -80,7 +77,6 @@
 		A4F0C93B2D678B16003BE124 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4F0C93C2D678B16003BE124 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A4F0C93E2D678B16003BE124 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		A4F0C9402D678B16003BE124 /* PDFCardCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PDFCardCell.swift; sourceTree = "<group>"; };
 		A4F0C9412D678B16003BE124 /* PDFModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PDFModel.swift; sourceTree = "<group>"; };
 		A4F0C9422D678B16003BE124 /* RecordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordViewController.swift; sourceTree = "<group>"; };
 		A4F0C9432D678B16003BE124 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -150,7 +146,6 @@
 				A4F0C93B2D678B16003BE124 /* Info.plist */,
 				A4F0C93D2D678B16003BE124 /* LaunchScreen.storyboard */,
 				A4F0C93F2D678B16003BE124 /* Main.storyboard */,
-				A4F0C9402D678B16003BE124 /* PDFCardCell.swift */,
 				A4F0C9412D678B16003BE124 /* PDFModel.swift */,
 				A4F0C9422D678B16003BE124 /* RecordViewController.swift */,
 				A4F0C9432D678B16003BE124 /* SceneDelegate.swift */,
@@ -304,7 +299,6 @@
 				A4F0C9502D678B16003BE124 /* AppDelegate.swift in Sources */,
 				A4F0C9742D678B16003BE124 /* RecordViewController.swift in Sources */,
 				A4F0C9532D678B16003BE124 /* AppState.swift in Sources */,
-				A4F0C96E2D678B16003BE124 /* PDFCardCell.swift in Sources */,
 				A4F0C9712D678B16003BE124 /* PDFModel.swift in Sources */,
 				A4F0C9592D678B16003BE124 /* CommentsViewController.swift in Sources */,
 				A4F0C9772D678B16003BE124 /* SceneDelegate.swift in Sources */,
@@ -321,7 +315,6 @@
 				A4F0C9512D678B16003BE124 /* AppDelegate.swift in Sources */,
 				A4F0C9752D678B16003BE124 /* RecordViewController.swift in Sources */,
 				A4F0C9542D678B16003BE124 /* AppState.swift in Sources */,
-				A4F0C96F2D678B16003BE124 /* PDFCardCell.swift in Sources */,
 				A4F0C9722D678B16003BE124 /* PDFModel.swift in Sources */,
 				A4F0C95A2D678B16003BE124 /* CommentsViewController.swift in Sources */,
 				A4F0C9782D678B16003BE124 /* SceneDelegate.swift in Sources */,
@@ -338,7 +331,6 @@
 				A4F0C9522D678B16003BE124 /* AppDelegate.swift in Sources */,
 				A4F0C9762D678B16003BE124 /* RecordViewController.swift in Sources */,
 				A4F0C9552D678B16003BE124 /* AppState.swift in Sources */,
-				A4F0C9702D678B16003BE124 /* PDFCardCell.swift in Sources */,
 				A4F0C9732D678B16003BE124 /* PDFModel.swift in Sources */,
 				A4F0C95B2D678B16003BE124 /* CommentsViewController.swift in Sources */,
 				A4F0C9792D678B16003BE124 /* SceneDelegate.swift in Sources */,
