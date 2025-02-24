@@ -15,11 +15,14 @@ class GenerateViewController: UIViewController {
 
     var youtubeUrlTextField: UITextField!
     var submitButton: UIButton!
+    private var submitButtonBottomConstraint: NSLayoutConstraint!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupUI()
+        setupKeyboardObservers()
+        setupTapGestureToDismissKeyboard()
     }
 
     func setupUI() {
@@ -38,19 +41,28 @@ class GenerateViewController: UIViewController {
         youtubeUrlTextField.placeholder = "Enter YouTube URL"
         youtubeUrlTextField.borderStyle = .roundedRect
         youtubeUrlTextField.frame = CGRect(x: 20, y: view.center.y, width: view.frame.width - 40, height: 40)
+        youtubeUrlTextField.backgroundColor = .gray
         view.addSubview(youtubeUrlTextField)
 
         // Set up a Submit button
         submitButton = UIButton(type: .system)
-        submitButton.setTitle("Submit URL", for: .normal)
-        submitButton.frame = CGRect(x: (view.frame.width - 200) / 2, y: view.center.y + 60, width: 200, height: 50)
+        submitButton.setTitle("Submit", for: .normal)
         submitButton.addTarget(self, action: #selector(submitUrl), for: .touchUpInside)
+        submitButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(submitButton)
+        
+        // Add bottom constraint for submitButton to control its vertical movement
+        submitButtonBottomConstraint = submitButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         
         NSLayoutConstraint.activate([
             generateLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            generateLabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
+            generateLabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
+            
+            submitButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            submitButton.bottomAnchor.constraint(equalTo: youtubeUrlTextField.bottomAnchor),
+            submitButtonBottomConstraint
         ])
+        
     }
 
     @objc func submitUrl() {
@@ -230,5 +242,36 @@ class GenerateViewController: UIViewController {
             // Present the alert
             self.present(alert, animated: true)
         }
+    }
+    
+    private func setupKeyboardObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    private func setupTapGestureToDismissKeyboard() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func keyboardWillShow(_ notification: Notification) {
+        if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+            submitButtonBottomConstraint.constant = -keyboardFrame.height
+            UIView.animate(withDuration: 0.3) {
+                self.view.layoutIfNeeded()
+            }
+        }
+    }
+
+    @objc private func keyboardWillHide(_ notification: Notification) {
+        submitButtonBottomConstraint.constant = -16
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
