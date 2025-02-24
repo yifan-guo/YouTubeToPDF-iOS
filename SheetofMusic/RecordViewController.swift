@@ -44,24 +44,81 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
         recordButton.addTarget(self, action: #selector(toggleRecording), for: .touchUpInside)
         view.addSubview(recordButton)
 
-        submitButton = UIButton(type: .system)
-        submitButton.frame = CGRect(x: (view.frame.width - 150) / 2, y: 450, width: 150, height: 50)
-        submitButton.setTitle("Submit Audio", for: .normal)
-        submitButton.isEnabled = false
-        submitButton.alpha = 0.5
-        submitButton.addTarget(self, action: #selector(submitAudio), for: .touchUpInside)
-        view.addSubview(submitButton)
+        // Create a container for the submit and delete buttons
+        let buttonsContainer = UIView()
+        buttonsContainer.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(buttonsContainer)
 
+        // Apply constraints to position the container below the record button
+        NSLayoutConstraint.activate([
+            buttonsContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            buttonsContainer.topAnchor.constraint(equalTo: recordButton.bottomAnchor, constant: 20),
+            buttonsContainer.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
+            buttonsContainer.heightAnchor.constraint(equalToConstant: 60)
+        ])
+
+        // Create Submit Button
+        submitButton = UIButton(type: .system)
+        submitButton.setTitle("Submit Audio", for: .normal)
+        submitButton.isHidden = true
+        submitButton.addTarget(self, action: #selector(submitAudio), for: .touchUpInside)
+        submitButton.layer.cornerRadius = 10
+        submitButton.layer.borderWidth = 1
+        submitButton.layer.borderColor = UIColor.green.cgColor
+        submitButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        buttonsContainer.addSubview(submitButton)
+
+        // Add green icon to submit button
+        let submitIcon = UIImageView(image: UIImage(systemName: "checkmark.circle.fill"))
+        submitIcon.tintColor = .green
+        submitIcon.translatesAutoresizingMaskIntoConstraints = false
+        submitButton.addSubview(submitIcon)
+
+        // Set constraints for Submit Button and Icon
+        NSLayoutConstraint.activate([
+            submitButton.leadingAnchor.constraint(equalTo: buttonsContainer.leadingAnchor),
+            submitButton.topAnchor.constraint(equalTo: buttonsContainer.topAnchor),
+            submitButton.bottomAnchor.constraint(equalTo: buttonsContainer.bottomAnchor),
+            submitButton.widthAnchor.constraint(equalTo: buttonsContainer.widthAnchor, multiplier: 0.45),
+            
+            submitIcon.centerYAnchor.constraint(equalTo: submitButton.centerYAnchor),
+            submitIcon.leadingAnchor.constraint(equalTo: submitButton.leadingAnchor, constant: 10),
+            submitIcon.widthAnchor.constraint(equalToConstant: 20),
+            submitIcon.heightAnchor.constraint(equalToConstant: 20)
+        ])
+
+        // Create Delete Button
         deleteButton = UIButton(type: .system)
-        deleteButton.frame = CGRect(x: (view.frame.width - 150) / 2, y: 510, width: 150, height: 50)
         deleteButton.setTitle("Delete Recording", for: .normal)
         deleteButton.isHidden = true
         deleteButton.addTarget(self, action: #selector(deleteRecording), for: .touchUpInside)
-        view.addSubview(deleteButton)
+        deleteButton.layer.cornerRadius = 10
+        deleteButton.layer.borderWidth = 1
+        deleteButton.layer.borderColor = UIColor.red.cgColor
+        deleteButton.translatesAutoresizingMaskIntoConstraints = false
+        buttonsContainer.addSubview(deleteButton)
 
+        // Add red icon to delete button
+        let deleteIcon = UIImageView(image: UIImage(systemName: "trash.fill"))
+        deleteIcon.tintColor = .red
+        deleteIcon.translatesAutoresizingMaskIntoConstraints = false
+        deleteButton.addSubview(deleteIcon)
+        
+        // Space between delete icon and text
+        deleteButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 0)
+
+        // Set constraints for Delete Button and Icon
         NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
+            deleteButton.leadingAnchor.constraint(equalTo: submitButton.trailingAnchor, constant: 10),
+            deleteButton.topAnchor.constraint(equalTo: buttonsContainer.topAnchor),
+            deleteButton.bottomAnchor.constraint(equalTo: buttonsContainer.bottomAnchor),
+            deleteButton.widthAnchor.constraint(equalTo: buttonsContainer.widthAnchor, multiplier: 0.5),
+
+            deleteIcon.centerYAnchor.constraint(equalTo: deleteButton.centerYAnchor),
+            deleteIcon.leadingAnchor.constraint(equalTo: deleteButton.leadingAnchor, constant: 10),
+            deleteIcon.widthAnchor.constraint(equalToConstant: 20),
+            deleteIcon.heightAnchor.constraint(equalToConstant: 20)
         ])
     }
 
@@ -114,8 +171,6 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
             audioRecorder?.record()
 
             recordButton.backgroundColor = .gray
-            submitButton.isEnabled = false
-            submitButton.alpha = 0.5
             startWaveformUpdates()
         } catch {
             print("Failed to start recording: \(error.localizedDescription)")
@@ -128,8 +183,8 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
 
         recordButton.backgroundColor = .lightGray
         recordButton.isEnabled = false
-        submitButton.isEnabled = true
-        submitButton.alpha = 1.0
+        
+        submitButton.isHidden = false
         deleteButton.isHidden = false
     }
 
@@ -144,8 +199,8 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
     func resetUIAfterDelete() {
         recordButton.backgroundColor = .red
         recordButton.isEnabled = true
-        submitButton.isEnabled = false
-        submitButton.alpha = 0.5
+        
+        submitButton.isHidden = true
         deleteButton.isHidden = true
     }
 
