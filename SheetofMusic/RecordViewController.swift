@@ -262,6 +262,11 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
             sendErrorNotification(message: "No recorded audio file found. Please record audio before submitting.")
             return
         }
+        
+        DispatchQueue.main.async {
+            self.submitButton.isEnabled = false
+            self.submitButton.setTitle("Uploading...", for: .disabled)
+        }
 
         sendSubmissionStartedNotification()
 
@@ -271,6 +276,13 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
     }
 
     func uploadAudioFile(audioUrl: URL) {
+        defer {
+            DispatchQueue.main.async {
+                self.submitButton.isEnabled = true
+                self.submitButton.setTitle("Submit Audio", for: .normal)
+            }
+        }
+        
         guard var urlComponents = URLComponents(string: apiUploadURL) else {
             print("❌ Invalid API URL")
             sendErrorNotification(message: "Invalid API URL. Please try again later.")
