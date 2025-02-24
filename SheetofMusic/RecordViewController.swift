@@ -1,15 +1,18 @@
 import UIKit
 import AVFoundation
 import UserNotifications
+import AVFoundation
 
 class RecordViewController: UIViewController, AVAudioRecorderDelegate {
 
     var recordButton: UIButton!
     var deleteButton: UIButton!
     var submitButton: UIButton!
+    var playButton: UIButton!
     var waveformView: WaveformView!
     var audioRecorder: AVAudioRecorder?
     var audioFileUrl: URL?
+    var audioPlayer: AVAudioPlayer?
 
     let apiUploadURL = "https://bnwc9iszkk.execute-api.us-east-2.amazonaws.com/prod/upload-audio" // Replace with your API
 
@@ -54,7 +57,8 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
             buttonsContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             buttonsContainer.topAnchor.constraint(equalTo: recordButton.bottomAnchor, constant: 20),
             buttonsContainer.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
-            buttonsContainer.heightAnchor.constraint(equalToConstant: 60)
+            // Adjust buttonsContainer height to accommodate the new Play button
+            buttonsContainer.heightAnchor.constraint(equalToConstant: 120)
         ])
 
         // Create Submit Button
@@ -79,7 +83,7 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
         NSLayoutConstraint.activate([
             submitButton.leadingAnchor.constraint(equalTo: buttonsContainer.leadingAnchor),
             submitButton.topAnchor.constraint(equalTo: buttonsContainer.topAnchor),
-            submitButton.bottomAnchor.constraint(equalTo: buttonsContainer.bottomAnchor),
+            submitButton.bottomAnchor.constraint(equalTo: buttonsContainer.centerYAnchor),
             submitButton.widthAnchor.constraint(equalTo: buttonsContainer.widthAnchor, multiplier: 0.45),
             
             submitIcon.centerYAnchor.constraint(equalTo: submitButton.centerYAnchor),
@@ -112,13 +116,43 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
         NSLayoutConstraint.activate([
             deleteButton.leadingAnchor.constraint(equalTo: submitButton.trailingAnchor, constant: 10),
             deleteButton.topAnchor.constraint(equalTo: buttonsContainer.topAnchor),
-            deleteButton.bottomAnchor.constraint(equalTo: buttonsContainer.bottomAnchor),
+            deleteButton.bottomAnchor.constraint(equalTo: buttonsContainer.centerYAnchor),
             deleteButton.widthAnchor.constraint(equalTo: buttonsContainer.widthAnchor, multiplier: 0.5),
 
             deleteIcon.centerYAnchor.constraint(equalTo: deleteButton.centerYAnchor),
             deleteIcon.leadingAnchor.constraint(equalTo: deleteButton.leadingAnchor, constant: 10),
             deleteIcon.widthAnchor.constraint(equalToConstant: 20),
             deleteIcon.heightAnchor.constraint(equalToConstant: 20)
+        ])
+        
+        // Create Play Button
+        playButton = UIButton(type: .system)
+        playButton.setTitle("Play Recording", for: .normal)
+        playButton.isHidden = true
+        playButton.addTarget(self, action: #selector(playRecording), for: .touchUpInside)
+        playButton.layer.cornerRadius = 10
+        playButton.layer.borderWidth = 1
+        playButton.layer.borderColor = UIColor.blue.cgColor
+        playButton.translatesAutoresizingMaskIntoConstraints = false
+        buttonsContainer.addSubview(playButton)
+        
+        // Add blue icon to play button
+        let playIcon = UIImageView(image: UIImage(systemName: "play.circle.fill"))
+        playIcon.tintColor = .blue
+        playIcon.translatesAutoresizingMaskIntoConstraints = false
+        playButton.addSubview(playIcon)
+        
+        NSLayoutConstraint.activate([
+            playButton.topAnchor.constraint(equalTo: buttonsContainer.centerYAnchor, constant: 10),
+            playButton.bottomAnchor.constraint(equalTo: buttonsContainer.bottomAnchor),
+            playButton.centerXAnchor.constraint(equalTo: buttonsContainer.centerXAnchor),
+            playButton.widthAnchor.constraint(equalTo: buttonsContainer.widthAnchor, multiplier: 0.45),
+            playButton.heightAnchor.constraint(equalToConstant: 44),
+            
+            playIcon.centerYAnchor.constraint(equalTo: playButton.centerYAnchor),
+            playIcon.leadingAnchor.constraint(equalTo: playButton.leadingAnchor, constant: 10),
+            playIcon.widthAnchor.constraint(equalToConstant: 20),
+            playIcon.heightAnchor.constraint(equalToConstant: 20)
         ])
     }
 
@@ -186,6 +220,7 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
         
         submitButton.isHidden = false
         deleteButton.isHidden = false
+        playButton.isHidden = false
     }
 
     @objc func deleteRecording() {
@@ -195,6 +230,22 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
         waveformView.clearWaveform()
         resetUIAfterDelete()
     }
+    
+    @objc func playRecording() {
+        print("tapped")
+        guard let audioUrl = audioFileUrl else {
+            print("No recorded audio file found")
+            return
+        }
+
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: audioUrl)
+            audioPlayer?.play()
+        } catch {
+            print("Error playing audio: \(error.localizedDescription)")
+        }
+    }
+
 
     func resetUIAfterDelete() {
         recordButton.backgroundColor = .red
@@ -202,6 +253,7 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
         
         submitButton.isHidden = true
         deleteButton.isHidden = true
+        playButton.isHidden = true
     }
 
     @objc func submitAudio() {
